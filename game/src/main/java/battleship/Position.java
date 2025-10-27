@@ -47,17 +47,5 @@ public class Position {
         return "(" + x + ", " + y + ")";
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Position)) return false;
-        Position other = (Position) obj;
-        return this.x == other.x && this.y == other.y;
-    }
-
-    @Override
-    public int hashCode() {
-        return x * 31 + y;
-    }
 }
 
