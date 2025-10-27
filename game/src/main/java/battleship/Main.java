@@ -10,15 +10,12 @@ public class Main {
         keyboard = new Scanner(System.in);
     }
 
-    /*
-    private void initializeShips(Player player) {
-       battleshipManager.initializeShips(player);
+    public void runBattleshipGame() {
+         System.out.println("Running Battleship Game...");
     }
-    */
-
 
     public static void main(String[] args) {
         Main program = new Main();
-        //program.runBattleshipGame();
+        program.runBattleshipGame();
     }
 }
