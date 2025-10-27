@@ -9,7 +9,7 @@ public abstract class Ship {
     List<Position> positions;
     Set<Position> hits;
 
-    public Ship(int size) {
+    protected Ship(int size) {
         this.size = size;
         this.hits = new HashSet<>();
     }
