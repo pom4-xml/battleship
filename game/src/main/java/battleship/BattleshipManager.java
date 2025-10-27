@@ -1,0 +1,22 @@
+package battleship;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BattleshipManager {
+    
+    private BattleshipManager() {
+    }
+
+    public static List<Ship> createStandardShips() {
+        List<Ship> ships = new ArrayList<>();
+
+        ships.add(new Destroyer());
+        ships.add(new Submarine());
+        ships.add(new Cruiser());
+        ships.add(new Battleship());
+        ships.add(new Carrier());
+
+        return ships;
+    }
+}
