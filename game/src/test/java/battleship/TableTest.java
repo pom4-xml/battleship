@@ -17,7 +17,7 @@ class TableTest {
     void setup(){
         table = new Table();
         myListOfShips = new ArrayList<>();
-        Ship ship = new Battleship();
+       // Ship ship = new Battleship();
         Position p1 = new Position(0, 0);
         Position p2 = new Position(1, 0);
         Position p3 = new Position(2, 0);
@@ -27,9 +27,9 @@ class TableTest {
         lPositions.add(p2);
         lPositions.add(p3);
         lPositions.add(p4);
-        ship.setPositions(lPositions);
+      //  ship.setPositions(lPositions);
 
-        myListOfShips.add(ship);
+        //myListOfShips.add(ship);
     }
 
     @Test

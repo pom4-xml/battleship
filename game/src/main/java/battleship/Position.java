@@ -3,38 +3,31 @@ package battleship;
 public class Position {
     private int x; // fila
     private int y; // columna
-    public static final int MAX = 9; // índice máximo (0-9 para un tablero 10x10)
-    public static final int MIN = 0; // índice mínimo
+    public static final int MAX = 9; 
+    public static final int MIN = 0; 
 
     public Position(int x, int y) {
         if (!esValida(x, y)) {
             throw new IllegalArgumentException(
-                "Coordenada inválida. Debe estar entre 0 y 9. Recibido: (" + x + ", " + y + ")"
+                "Coordenada inválida: (" + x + ", " + y + ")"
             );
         }
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+    public int getX() { return x; }
+    public int getY() { return y; }
 
     public void setX(int x) {
-        if (!esValida(x, this.y)) {
-            throw new IllegalArgumentException("Coordenada X fuera de rango: " + x);
-        }
+        if (!esValida(x, this.y)) 
+            throw new IllegalArgumentException("X fuera de rango: " + x);
         this.x = x;
     }
 
     public void setY(int y) {
-        if (!esValida(this.x, y)) {
-            throw new IllegalArgumentException("Coordenada Y fuera de rango: " + y);
-        }
+        if (!esValida(this.x, y)) 
+            throw new IllegalArgumentException("Y fuera de rango: " + y);
         this.y = y;
     }
 
@@ -43,9 +36,20 @@ public class Position {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Position)) return false;
+        Position p = (Position) o;
+        return x == p.x && y == p.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return x * 31 + y;
+    }
+
+    @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
-
 }
-

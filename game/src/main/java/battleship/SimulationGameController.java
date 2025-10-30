@@ -20,28 +20,35 @@ public class SimulationGameController {
         player2.placeShipsManually(sc);
 
         boolean player1Turn = true;
+while (true) {
+    Player current = player1Turn ? player1 : player2;
+    Player enemy = player1Turn ? player2 : player1;
 
-        while (true) {
-            Player current = player1Turn ? player1 : player2;
-            Player enemy = player1Turn ? player2 : player1;
+    System.out.println("\nTurno de " + current.getName());
+    System.out.print("Introduce coordenadas (fila columna): ");
+    int x = sc.nextInt();
+    int y = sc.nextInt();
 
-            System.out.println("\nTurno de " + current.getName());
-            System.out.print("Introduce coordenadas (fila columna): ");
-            int x = sc.nextInt();
-            int y = sc.nextInt();
+    Position shot = new Position(x, y);
+    String result = current.shootAt(shot, enemy);
 
-            Position shot = new Position(x, y);
-            String result = current.shootAt(shot, enemy);
+    System.out.println("Resultado del disparo: " + result);
 
-            System.out.println("Resultado del disparo: " + result);
+    // --- DIBUJAR TABLEROS AQUÍ ---
+    System.out.println("\nTablero de " + current.getName() + ":");
+    current.printBoard(true);  // mostrar tus barcos
+    System.out.println("\nTablero del enemigo:");
+    enemy.printBoard(false);   // no mostrar barcos del enemigo
+    // -----------------------------
 
-            if (enemy.hasLost()) {
-                System.out.println(current.getName() + " gana la partida!");
-                break;
-            }
+    if (enemy.hasLost()) {
+        System.out.println(current.getName() + " gana la partida!");
+        break;
+    }
 
-            player1Turn = !player1Turn;
-        }
+    player1Turn = !player1Turn;
+}
+
 
         sc.close();
     }
