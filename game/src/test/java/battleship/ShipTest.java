@@ -3,54 +3,62 @@ package battleship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShipTest {
 
-    private Destroyer destroyer;
-    private Position p1;
-    private Position p2;
-    private Position p3;
+    private Ship testShip;
+    private Position p1, p2, p3;
+
+    static class TestShip extends Ship {
+        public TestShip(int size) {
+            super(size);
+        }
+    }
 
     @BeforeEach
     void setUp() {
-        destroyer = new Destroyer();
+        testShip = new TestShip(2);
         p1 = new Position(0, 0);
         p2 = new Position(0, 1);
         p3 = new Position(1, 1);
-        destroyer.setPositions(Arrays.asList(p1, p2));
+        testShip.setPositions(Arrays.asList(p1, p2));
     }
 
     @Test
-    void testOccupiesPosition() {
-        assertTrue(destroyer.occupies(p1));
-        assertFalse(destroyer.occupies(p3));
+    void testOccupies() {
+        assertTrue(testShip.occupies(p1));
+        assertFalse(testShip.occupies(p3));
     }
 
     @Test
     void testRegisterHit() {
-        assertTrue(destroyer.registerHit(p1));
-        assertFalse(destroyer.registerHit(p3));
-        assertEquals(1, destroyer.getHits().size());
+        assertTrue(testShip.registerHit(p1));
+        assertFalse(testShip.registerHit(p3));
+        assertEquals(1, testShip.getHits().size());
     }
 
     @Test
     void testIsSunk() {
-        destroyer.registerHit(p1);
-        destroyer.registerHit(p2);
-        assertTrue(destroyer.isSunk());
-    }
-
-    @Test
-    void testNotSunkInitially() {
-        assertFalse(destroyer.isSunk());
+        testShip.registerHit(p1);
+        assertFalse(testShip.isSunk());
+        testShip.registerHit(p2);
+        assertTrue(testShip.isSunk());
     }
 
     @Test
     void testGettersAndSetters() {
-        destroyer.setSize(3);
-        assertEquals(3, destroyer.getSize());
+        testShip.setSize(3);
+        assertEquals(3, testShip.getSize());
+
+        List<Position> newPositions = Arrays.asList(p1, p2, p3);
+        testShip.setPositions(newPositions);
+        assertEquals(newPositions, testShip.getPositions());
+
+        Set<Position> newHits = new HashSet<>(Collections.singletonList(p1));
+        testShip.setHits(newHits);
+        assertEquals(newHits, testShip.getHits());
     }
 }
