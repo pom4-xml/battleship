@@ -1,6 +1,13 @@
 package battleship;
 
 import org.junit.jupiter.api.Test;
+
+import battleship.ship.Battleship;
+import battleship.ship.Carrier;
+import battleship.ship.Cruiser;
+import battleship.ship.Destroyer;
+import battleship.ship.Submarine;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
