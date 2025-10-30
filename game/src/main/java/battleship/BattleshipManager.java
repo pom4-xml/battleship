@@ -1,28 +1,27 @@
 package battleship;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import battleship.ship.*;
 
-import battleship.ship.Battleship;
-import battleship.ship.Carrier;
-import battleship.ship.Cruiser;
-import battleship.ship.Destroyer;
-import battleship.ship.Submarine;
+class BattleshipManagerTest {
 
-public class BattleshipManager {
-    
-    private BattleshipManager() {
-    }
-
-    public static List<Ship> createStandardShips() {
-        List<Ship> ships = new ArrayList<>();
-
-        ships.add(new Destroyer());
-        ships.add(new Submarine());
-        ships.add(new Cruiser());
-        ships.add(new Battleship());
-        ships.add(new Carrier());
-
-        return ships;
+    @Test
+    void testCreateStandardShips() {
+        var ships = BattleshipManager.createStandardShips();
+        assertEquals(5, ships.size());
+        boolean hasDestroyer = false, hasSubmarine = false, hasCruiser = false, hasBattleship = false, hasCarrier = false;
+        for (Ship s : ships) {
+            if (s instanceof Destroyer) hasDestroyer = true;
+            else if (s instanceof Submarine) hasSubmarine = true;
+            else if (s instanceof Cruiser) hasCruiser = true;
+            else if (s instanceof Battleship) hasBattleship = true;
+            else if (s instanceof Carrier) hasCarrier = true;
+        }
+        assertTrue(hasDestroyer);
+        assertTrue(hasSubmarine);
+        assertTrue(hasCruiser);
+        assertTrue(hasBattleship);
+        assertTrue(hasCarrier);
     }
 }

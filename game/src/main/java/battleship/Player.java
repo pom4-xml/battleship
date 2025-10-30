@@ -1,80 +1,72 @@
 package battleship;
 
-import java.util.List;
-import java.util.Scanner;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import battleship.ship.*;
 
-public class Player {
-    private String name;
-    private List<Ship> ships;
+import java.util.ArrayList;
 
-    public Player(String name, List<Ship> ships) {
-        this.name = name;
-        this.ships = ships;
+class PlayerTest {
+
+    private Player player1;
+    private Player player2;
+    private Ship destroyer;
+    private Ship submarine;
+    private Position p1, p2;
+
+    @BeforeEach
+    void setUp() {
+        destroyer = new Destroyer();
+        submarine = new Submarine();
+
+        ArrayList<Ship> ships1 = new ArrayList<Ship>();
+        ships1.add(destroyer);
+        ships1.add(submarine);
+
+        ArrayList<Ship> ships2 = new ArrayList<Ship>();
+        ships2.add(new Destroyer());
+        ships2.add(new Submarine());
+
+        player1 = new Player("Alice", ships1);
+        player2 = new Player("Bob", ships2);
+
+        // Set positions manually
+        p1 = new Position(0, 0);
+        p2 = new Position(0, 1);
+        ArrayList<Position> destroyerPositions = new ArrayList<Position>();
+        destroyerPositions.add(p1);
+        destroyerPositions.add(p2);
+        destroyer.setPositions(destroyerPositions);
     }
 
-    public String getName() { 
-        return name; 
+    @Test
+    void testGetName() {
+        assertEquals("Alice", player1.getName());
     }
 
-    public List<Ship> getShips() { 
-        return ships; 
+    @Test
+    void testHasLost() {
+        assertFalse(player1.hasLost());
+        destroyer.registerHit(p1);
+        destroyer.registerHit(p2);
+        submarine.setHits(new ArrayList<Position>()); // still alive
+        assertFalse(player1.hasLost());
+        submarine.registerHit(new Position(1, 0));
+        submarine.registerHit(new Position(1, 1));
+        submarine.registerHit(new Position(1, 2));
+        assertTrue(player1.hasLost());
     }
 
-    public boolean hasLost() {
-        for (Ship s : ships) {
-            if (!s.isSunk()) return false;
-        }
-        return true;
-    }
+    @Test
+    void testShootAt() {
+        Position shot1 = new Position(0, 0);
+        Position shot2 = new Position(5, 5);
 
-    public String shootAt(Position p, Player enemy) {
-        for (Ship s : enemy.getShips()) {
-            if (s.occupies(p)) {
-                s.registerHit(p);
-                if (s.isSunk()) return "SUNK " + s.getClass().getSimpleName();
-                return "HIT";
-            }
-        }
-        return "MISS";
-    }
+        String result1 = player1.shootAt(shot1, player2);
+        assertTrue(result1.equals("HIT") || result1.startsWith("SUNK"));
 
-    public void placeShipsManually(Scanner sc) {
-        System.out.println("\n=== " + name + " placing ships ===");
-        for (Ship s : ships) {
-            boolean placed = false;
-            while (!placed) {
-                System.out.println("Place your " + s.getClass().getSimpleName() + " (size " + s.getSize() + ")");
-                System.out.print("Starting row (0-9): ");
-                int row = sc.nextInt();
-                System.out.print("Starting column (0-9): ");
-                int col = sc.nextInt();
-                System.out.print("Horizontal? (true/false): ");
-                boolean horizontal = sc.nextBoolean();
-
-                List<Position> positions = Ship.generatePositions(row, col, s.getSize(), horizontal);
-
-                boolean valid = true;
-                for (Position p : positions) {
-                    if (!Position.isValid(p.getX(), p.getY())) {
-                        valid = false;
-                        break;
-                    }
-                    for (Ship other : ships) {
-                        if (other.getPositions().contains(p)) {
-                            valid = false;
-                            break;
-                        }
-                    }
-                    if (!valid) break;
-                }
-
-                if (valid) {
-                    s.setPositions(positions);
-                    placed = true;
-                } else {
-                    System.out.println("Invalid position or overlapping ships. Try again.");
-                }
-            }
-        }
+        String result2 = player1.shootAt(shot2, player2);
+        assertEquals("MISS", result2);
     }
 }
