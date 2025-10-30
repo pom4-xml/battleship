@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
     @Test
     void testEsValida() {
 
-        assertTrue(Position.esValida(0, 0));
-        assertTrue(Position.esValida(5, 5));
-        assertTrue(Position.esValida(9, 9));
+        assertTrue(Position.isValid(0, 0));
+        assertTrue(Position.isValid(5, 5));
+        assertTrue(Position.isValid(9, 9));
 
-        assertFalse(Position.esValida(-1, 0));
-        assertFalse(Position.esValida(0, -1));
-        assertFalse(Position.esValida(10, 5));
-        assertFalse(Position.esValida(5, 10));
+        assertFalse(Position.isValid(-1, 0));
+        assertFalse(Position.isValid(0, -1));
+        assertFalse(Position.isValid(10, 5));
+        assertFalse(Position.isValid(5, 10));
     }
 }

@@ -12,35 +12,69 @@ public class Player {
         this.ships = ships;
     }
 
-    public String getName() { return name; }
-    public List<Ship> getShips() { return ships; }
+    public String getName() { 
+        return name; 
+    }
+
+    public List<Ship> getShips() { 
+        return ships; 
+    }
 
     public boolean hasLost() {
-        return ships.stream().allMatch(Ship::isSunk);
+        for (Ship s : ships) {
+            if (!s.isSunk()) return false;
+        }
+        return true;
     }
 
     public String shootAt(Position p, Player enemy) {
         for (Ship s : enemy.getShips()) {
             if (s.occupies(p)) {
                 s.registerHit(p);
-                return s.isSunk() ? "SUNK" : "HIT";
+                if (s.isSunk()) return "SUNK " + s.getClass().getSimpleName();
+                return "HIT";
             }
         }
         return "MISS";
     }
 
     public void placeShipsManually(Scanner sc) {
-        System.out.println("=== " + name + " coloca sus barcos ===");
+        System.out.println("\n=== " + name + " placing ships ===");
         for (Ship s : ships) {
-            System.out.println("Coloca tu " + s.getClass().getSimpleName() + " (tamaño " + s.getSize() + ")");
-            System.out.print("Fila inicial (0-9): ");
-            int fila = sc.nextInt();
-            System.out.print("Columna inicial (0-9): ");
-            int col = sc.nextInt();
-            System.out.print("Horizontal? (true/false): ");
-            boolean horizontal = sc.nextBoolean();
+            boolean placed = false;
+            while (!placed) {
+                System.out.println("Place your " + s.getClass().getSimpleName() + " (size " + s.getSize() + ")");
+                System.out.print("Starting row (0-9): ");
+                int row = sc.nextInt();
+                System.out.print("Starting column (0-9): ");
+                int col = sc.nextInt();
+                System.out.print("Horizontal? (true/false): ");
+                boolean horizontal = sc.nextBoolean();
 
-            s.setPositions(Ship.generarPosiciones(fila, col, s.getSize(), horizontal));
+                List<Position> positions = Ship.generatePositions(row, col, s.getSize(), horizontal);
+
+                boolean valid = true;
+                for (Position p : positions) {
+                    if (!Position.isValid(p.getX(), p.getY())) {
+                        valid = false;
+                        break;
+                    }
+                    for (Ship other : ships) {
+                        if (other.getPositions().contains(p)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) break;
+                }
+
+                if (valid) {
+                    s.setPositions(positions);
+                    placed = true;
+                } else {
+                    System.out.println("Invalid position or overlapping ships. Try again.");
+                }
+            }
         }
     }
 }

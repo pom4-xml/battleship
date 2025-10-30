@@ -6,17 +6,16 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Ship {
-   protected  int size;
-   protected  List<Position> positions;
+    protected int size;
+    protected List<Position> positions;
     protected Set<Position> hits;
 
     protected Ship(int size) {
         this.size = size;
+        this.positions = new ArrayList<>();
         this.hits = new HashSet<>();
-            this.positions = new ArrayList<>(); // <- ¡Falta esto!
-
     }
-    
+
     public boolean occupies(Position p) {
         return positions.contains(p);
     }
@@ -32,14 +31,15 @@ public abstract class Ship {
     public boolean isSunk() {
         return hits.size() == size;
     }
-        public static List<Position> generarPosiciones(int fila, int col, int tamaño, boolean horizontal) {
-        List<Position> pos = new ArrayList<>();
-        for (int i = 0; i < tamaño; i++) {
-            int x = horizontal ? fila : fila + i;
+
+    public static List<Position> generatePositions(int row, int col, int size, boolean horizontal) {
+        List<Position> positions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            int x = horizontal ? row : row + i;
             int y = horizontal ? col + i : col;
-            pos.add(new Position(x, y));
+            positions.add(new Position(x, y));
         }
-        return pos;
+        return positions;
     }
 
     // Getters and Setters
