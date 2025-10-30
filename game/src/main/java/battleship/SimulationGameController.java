@@ -79,7 +79,7 @@ public class SimulationGameController {
             System.out.println("\n=== " + current.getName() + "'s turn ===");
             printBoard(enemy, false);
 
-            Position shot = askForShot(current);
+            Position shot = askForShot();
             String result = current.shootAt(shot, enemy);
             System.out.println("Result: " + result);
 
@@ -92,7 +92,7 @@ public class SimulationGameController {
         }
     }
 
-    private Position askForShot(Player player) {
+    private Position askForShot() {
         while (true) {
             System.out.print("Enter coordinates (row column): ");
             int x = scanner.nextInt();
