@@ -124,7 +124,15 @@ public class SimulationGameController {
     private void fillGridWithShips(Player player, char[][] grid, boolean showShips) {
         for (Ship s : player.getShips()) {
             for (Position p : s.getPositions()) {
-                grid[p.getX()][p.getY()] = s.getHits().contains(p) ? 'X' : (showShips ? 'O' : grid[p.getX()][p.getY()]);
+                char symbol;
+                if (s.getHits().contains(p)) {
+                    symbol = 'X';
+                } else if (showShips) {
+                    symbol = 'O';
+                } else {
+                    symbol = grid[p.getX()][p.getY()];
+                }
+                grid[p.getX()][p.getY()] = symbol;
             }
         }
     }
