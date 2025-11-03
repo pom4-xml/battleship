@@ -3,7 +3,7 @@ package battleship;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-public class PositionTest {
+class PositionTest {
 
     @Test
     void testValidPositionCreation() {
@@ -40,7 +40,8 @@ public class PositionTest {
     @Test
     void testNotEqualDifferentObject() {
         Position p = new Position(2, 2);
-        assertNotEquals(p, "string");
-        assertNotEquals(p, null);
+
+        assertNotEquals("string", p);
+        assertNotEquals(null, p);
     }
 }
