@@ -6,7 +6,7 @@ import battleship.communication.socket.Server;
 
 public class Communication {
     public Communication() {
-
+        // Default constructor intentionally left empty — no initialization needed here
     }
 
     public NetworkConnection establishConnection() {

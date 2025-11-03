@@ -10,7 +10,6 @@ import java.util.ArrayList;
 class PlayerTest {
 
     private Player player1;
-    private Player player2;
     private Destroyer destroyer;
     private Submarine submarine;
     private Position d1, d2, s1, s2, s3;
@@ -64,14 +63,4 @@ class PlayerTest {
         submarine.registerHit(s3);
         assertTrue(player1.hasLost());
     }
-
-    /*@Test
-    void testShootAt() {
-        Position shotHit = new Position(0, 0);
-        Position shotMiss = new Position(5, 5);
-        String result1 = player1.shootAt(shotHit, player2);
-        assertTrue(result1.equals("HIT") || result1.startsWith("SUNK"));
-        String result2 = player1.shootAt(shotMiss, player2);
-        assertEquals("MISS", result2);
-    }*/
 }
