@@ -44,7 +44,7 @@ public class SimulationGameController {
                 LOGGER.warning("Invalid position or overlapping ships. Try again.");
                 continue;
             }
-            ship.setPositions(Ship.generatePositions(placement.row, placement.col, ship.getSize(), placement.horizontal));
+            ship.setPositions(Ship.generatePositions(placement.getRow(), placement.getCol(), ship.getSize(), placement.isHorizontal()));
             placed = true;
         }
     }
@@ -61,15 +61,15 @@ public class SimulationGameController {
     }
 
     private boolean isPlacementValid(ShipPlacement placement, Ship ship, Player player) {
-        int maxRow = placement.horizontal ? placement.row : placement.row + ship.getSize() - 1;
-        int maxCol = placement.horizontal ? placement.col + ship.getSize() - 1 : placement.col;
+        int maxRow = placement.isHorizontal() ? placement.getRow() : placement.getRow() + ship.getSize() - 1;
+        int maxCol = placement.isHorizontal() ? placement.getCol() + ship.getSize() - 1 : placement.getCol();
 
         if (maxRow > Position.MAX || maxCol > Position.MAX) {
             LOGGER.warning("Ship goes out of bounds.");
             return false;
         }
 
-        List<Position> positions = Ship.generatePositions(placement.row, placement.col, ship.getSize(), placement.horizontal);
+        List<Position> positions = Ship.generatePositions(placement.getRow(), placement.getCol(), ship.getSize(), placement.isHorizontal());
         for (Position p : positions) {
             if (!Position.isValid(p.getX(), p.getY())) return false;
             for (Ship other : player.getShips()) {
@@ -79,7 +79,29 @@ public class SimulationGameController {
         return true;
     }
 
-    private record ShipPlacement(int row, int col, boolean horizontal) {}
+    private static class ShipPlacement {
+        private final int row;
+        private final int col;
+        private final boolean horizontal;
+
+        public ShipPlacement(int row, int col, boolean horizontal) {
+            this.row = row;
+            this.col = col;
+            this.horizontal = horizontal;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public boolean isHorizontal() {
+            return horizontal;
+        }
+    }
 
     private void gameLoop() {
         while (true) {
