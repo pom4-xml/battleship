@@ -9,7 +9,7 @@ public class SimulationGameController {
     private Player player1;
     private Player player2;
     private boolean player1Turn;
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public SimulationGameController() {
         scanner = new Scanner(System.in);
@@ -29,39 +29,50 @@ public class SimulationGameController {
     private void placeShips(Player player) {
         LOGGER.log(Level.INFO, "\n--- {0} placing ships ---", player.getName());
         for (Ship ship : player.getShips()) {
-            boolean placed = false;
-            while (!placed) {
-                LOGGER.log(Level.INFO, "Place your {0} (size {1})", new Object[]{ship.getClass().getSimpleName(), ship.getSize()});
-                LOGGER.info("Starting row (0-9): ");
-                int row = scanner.nextInt();
-                LOGGER.info("Starting column (0-9): ");
-                int col = scanner.nextInt();
-                LOGGER.info("Horizontal? (true/false): ");
-                boolean horizontal = scanner.nextBoolean();
-
-                int maxRow = horizontal ? row : row + ship.getSize() - 1;
-                int maxCol = horizontal ? col + ship.getSize() - 1 : col;
-                if (maxRow > Position.MAX || maxCol > Position.MAX) {
-                    LOGGER.info("Ship goes out of bounds. Try again.");
-                    continue;
-                }
-
-                List<Position> positions = Ship.generatePositions(row, col, ship.getSize(), horizontal);
-                if (isOverlapping(player, positions)) {
-                    LOGGER.info("Ship overlaps with another ship. Try again.");
-                } else {
-                    ship.setPositions(positions);
-                    placed = true;
-                }
+            while (!tryPlaceShip(player, ship)) {
+                LOGGER.info("Invalid placement. Try again.");
             }
             printBoard(player, true);
         }
     }
 
+    private boolean tryPlaceShip(Player player, Ship ship) {
+        LOGGER.log(Level.INFO, "Place your {0} (size {1})",
+                new Object[]{ship.getClass().getSimpleName(), ship.getSize()});
+        LOGGER.info("Starting row (0-9): ");
+        int row = scanner.nextInt();
+        LOGGER.info("Starting column (0-9): ");
+        int col = scanner.nextInt();
+        LOGGER.info("Horizontal? (true/false): ");
+        boolean horizontal = scanner.nextBoolean();
+
+        if (!isPlacementValid(row, col, ship.getSize(), horizontal)) {
+            LOGGER.info("Ship goes out of bounds. Try again.");
+            return false;
+        }
+
+        List<Position> positions = Ship.generatePositions(row, col, ship.getSize(), horizontal);
+        if (isOverlapping(player, positions)) {
+            LOGGER.info("Ship overlaps with another ship. Try again.");
+            return false;
+        }
+
+        ship.setPositions(positions);
+        return true;
+    }
+
+    private boolean isPlacementValid(int row, int col, int size, boolean horizontal) {
+        int maxRow = horizontal ? row : row + size - 1;
+        int maxCol = horizontal ? col + size - 1 : col;
+        return maxRow <= Position.MAX && maxCol <= Position.MAX;
+    }
+
     private boolean isOverlapping(Player player, List<Position> positions) {
-        for (Position p : positions) {
-            for (Ship other : player.getShips()) {
-                if (other.getPositions().contains(p)) return true;
+        for (Ship other : player.getShips()) {
+            for (Position p : positions) {
+                if (other.getPositions().contains(p)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -71,11 +82,14 @@ public class SimulationGameController {
         while (true) {
             Player current = player1Turn ? player1 : player2;
             Player enemy = player1Turn ? player2 : player1;
-            LOGGER.log(Level.INFO, "\n=== {0}'s turn ===", current.getName());
+
+            LOGGER.log(Level.INFO, "\n=== {0}''s turn ===", current.getName());
             printBoard(enemy, false);
+
             Position shot = askForShot();
             String result = current.shootAt(shot, enemy);
             LOGGER.log(Level.INFO, "Result: {0}", result);
+
             if (enemy.hasLost()) {
                 LOGGER.log(Level.INFO, "\n🏆 {0} wins the game!", current.getName());
                 break;
@@ -100,26 +114,32 @@ public class SimulationGameController {
     private void printBoard(Player player, boolean showShips) {
         char[][] grid = new char[10][10];
         for (int i = 0; i < 10; i++) Arrays.fill(grid[i], '.');
-
-        for (Ship s : player.getShips()) {
-            for (Position p : s.getPositions()) {
-                if (s.getHits().contains(p)) grid[p.getX()][p.getY()] = 'X';
-                else if (showShips) grid[p.getX()][p.getY()] = 'O';
-            }
-        }
+        fillGridWithShips(player, grid, showShips);
 
         if (LOGGER.isLoggable(Level.INFO)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%n%s %s%n", player.getName(), showShips ? "(your ships)" : "board"));
-            sb.append("   ");
-            for (int j = 0; j < 10; j++) sb.append(String.format("%d ", j));
-            sb.append("\n");
-            for (int i = 0; i < 10; i++) {
-                sb.append(String.format("%d ", i));
-                for (int j = 0; j < 10; j++) sb.append(String.format("%c ", grid[i][j]));
-                sb.append("\n");
-            }
-            LOGGER.info(sb.toString());
+            LOGGER.info(buildBoardString(player, showShips, grid));
         }
+    }
+
+    private void fillGridWithShips(Player player, char[][] grid, boolean showShips) {
+        for (Ship s : player.getShips()) {
+            for (Position p : s.getPositions()) {
+                grid[p.getX()][p.getY()] = s.getHits().contains(p) ? 'X' : (showShips ? 'O' : grid[p.getX()][p.getY()]);
+            }
+        }
+    }
+
+    private String buildBoardString(Player player, boolean showShips, char[][] grid) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%n%s %s%n", player.getName(), showShips ? "(your ships)" : "board"));
+        sb.append("   ");
+        for (int j = 0; j < 10; j++) sb.append(String.format("%d ", j));
+        sb.append("\n");
+        for (int i = 0; i < 10; i++) {
+            sb.append(String.format("%d ", i));
+            for (int j = 0; j < 10; j++) sb.append(String.format("%c ", grid[i][j]));
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
