@@ -10,7 +10,6 @@ import java.util.ArrayList;
 class PlayerTest {
 
     private Player player1;
-    private Player player2;
     private Destroyer destroyer;
     private Submarine submarine;
     private Position d1, d2, s1, s2, s3;
@@ -24,12 +23,7 @@ class PlayerTest {
         ships1.add(destroyer);
         ships1.add(submarine);
 
-        ArrayList<Ship> ships2 = new ArrayList<>();
-        ships2.add(new Destroyer());
-        ships2.add(new Submarine());
-
         player1 = new Player("Alice", ships1);
-        player2 = new Player("Bob", ships2);
 
         d1 = new Position(0, 0);
         d2 = new Position(0, 1);

@@ -3,7 +3,7 @@ package battleship;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-public class PositionTest {
+class PositionTest {
 
     @Test
     void testValidPositionCreation() {
