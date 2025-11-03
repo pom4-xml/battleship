@@ -1,8 +1,10 @@
 package battleship;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class SimulationGameController {
+    private static final Logger LOGGER = Logger.getLogger(SimulationGameController.class.getName());
     private Player player1;
     private Player player2;
     private boolean player1Turn;
@@ -14,7 +16,7 @@ public class SimulationGameController {
     }
 
     public void startGame() {
-        System.out.println("=== Welcome to Battleship ===");
+        LOGGER.info("=== Welcome to Battleship ===");
 
         player1 = new Player("Player 1", BattleshipManager.createStandardShips());
         player2 = new Player("Player 2", BattleshipManager.createStandardShips());
@@ -23,68 +25,76 @@ public class SimulationGameController {
         placeShips(player2);
 
         gameLoop();
-
         scanner.close();
     }
 
     private void placeShips(Player player) {
-        System.out.println("\n--- " + player.getName() + " placing ships ---");
+        LOGGER.info("\n--- " + player.getName() + " placing ships ---");
         for (Ship ship : player.getShips()) {
-            boolean placed = false;
-            while (!placed) {
-                System.out.println("Place your " + ship.getClass().getSimpleName() + " (size " + ship.getSize() + ")");
-                System.out.print("Starting row (0-9): ");
-                int row = scanner.nextInt();
-                System.out.print("Starting column (0-9): ");
-                int col = scanner.nextInt();
-                System.out.print("Horizontal? (true/false): ");
-                boolean horizontal = scanner.nextBoolean();
-
-                int maxRow = horizontal ? row : row + ship.getSize() - 1;
-                int maxCol = horizontal ? col + ship.getSize() - 1 : col;
-                if (maxRow > Position.MAX || maxCol > Position.MAX) {
-                    System.out.println("Ship goes out of bounds. Try again.");
-                    continue;
-                }
-
-                List<Position> positions = Ship.generatePositions(row, col, ship.getSize(), horizontal);
-
-                boolean overlaps = false;
-                for (Position p : positions) {
-                    for (Ship other : player.getShips()) {
-                        if (other.getPositions().contains(p)) {
-                            overlaps = true;
-                            break;
-                        }
-                    }
-                    if (overlaps) break;
-                }
-
-                if (!overlaps) {
-                    ship.setPositions(positions);
-                    placed = true;
-                } else {
-                    System.out.println("Ship overlaps with another ship. Try again.");
-                }
-            }
+            placeSingleShip(player, ship);
             printBoard(player, true);
         }
     }
+
+    private void placeSingleShip(Player player, Ship ship) {
+        boolean placed = false;
+        while (!placed) {
+            ShipPlacement placement = askForShipPlacement(ship);
+            if (!isPlacementValid(placement, ship, player)) {
+                LOGGER.warning("Invalid position or overlapping ships. Try again.");
+                continue;
+            }
+            ship.setPositions(Ship.generatePositions(placement.row, placement.col, ship.getSize(), placement.horizontal));
+            placed = true;
+        }
+    }
+
+    private ShipPlacement askForShipPlacement(Ship ship) {
+        LOGGER.info("Place your " + ship.getClass().getSimpleName() + " (size " + ship.getSize() + ")");
+        LOGGER.info("Starting row (0-9): ");
+        int row = scanner.nextInt();
+        LOGGER.info("Starting column (0-9): ");
+        int col = scanner.nextInt();
+        LOGGER.info("Horizontal? (true/false): ");
+        boolean horizontal = scanner.nextBoolean();
+        return new ShipPlacement(row, col, horizontal);
+    }
+
+    private boolean isPlacementValid(ShipPlacement placement, Ship ship, Player player) {
+        int maxRow = placement.horizontal ? placement.row : placement.row + ship.getSize() - 1;
+        int maxCol = placement.horizontal ? placement.col + ship.getSize() - 1 : placement.col;
+
+        if (maxRow > Position.MAX || maxCol > Position.MAX) {
+            LOGGER.warning("Ship goes out of bounds.");
+            return false;
+        }
+
+        List<Position> positions = Ship.generatePositions(placement.row, placement.col, ship.getSize(), placement.horizontal);
+        for (Position p : positions) {
+            if (!Position.isValid(p.getX(), p.getY())) return false;
+            for (Ship other : player.getShips()) {
+                if (other.getPositions().contains(p)) return false;
+            }
+        }
+        return true;
+    }
+
+    private record ShipPlacement(int row, int col, boolean horizontal) {}
 
     private void gameLoop() {
         while (true) {
             Player current = player1Turn ? player1 : player2;
             Player enemy = player1Turn ? player2 : player1;
 
-            System.out.println("\n=== " + current.getName() + "'s turn ===");
+            LOGGER.info("\n=== " + current.getName() + "'s turn ===");
             printBoard(enemy, false);
 
             Position shot = askForShot();
             String result = current.shootAt(shot, enemy);
-            System.out.println("Result: " + result);
+            LOGGER.info("Result: " + result);
 
             if (enemy.hasLost()) {
-                System.out.println("\n🏆 " + current.getName() + " wins the game!");
+                LOGGER.info("\n🏆 " + current.getName() + " wins the game!");
                 break;
             }
 
@@ -94,11 +104,11 @@ public class SimulationGameController {
 
     private Position askForShot() {
         while (true) {
-            System.out.print("Enter coordinates (row column): ");
+            LOGGER.info("Enter coordinates (row column): ");
             int x = scanner.nextInt();
             int y = scanner.nextInt();
             if (!Position.isValid(x, y)) {
-                System.out.println("Coordinates out of bounds. Try again.");
+                LOGGER.warning("Coordinates out of bounds. Try again.");
                 continue;
             }
             return new Position(x, y);
@@ -116,14 +126,16 @@ public class SimulationGameController {
             }
         }
 
-        System.out.println("\n" + player.getName() + (showShips ? " (your ships)" : " board"));
-        System.out.print("  ");
-        for (int j = 0; j < 10; j++) System.out.print(j + " ");
-        System.out.println();
+        LOGGER.info("\n" + player.getName() + (showShips ? " (your ships)" : " board"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("  ");
+        for (int j = 0; j < 10; j++) sb.append(j).append(" ");
+        sb.append("\n");
         for (int i = 0; i < 10; i++) {
-            System.out.print(i + " ");
-            for (int j = 0; j < 10; j++) System.out.print(grid[i][j] + " ");
-            System.out.println();
+            sb.append(i).append(" ");
+            for (int j = 0; j < 10; j++) sb.append(grid[i][j]).append(" ");
+            sb.append("\n");
         }
+        LOGGER.info(sb.toString());
     }
 }
