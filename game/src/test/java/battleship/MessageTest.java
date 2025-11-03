@@ -1,5 +1,6 @@
 package battleship;
 
-public class MessageTest {
-    
+class MessageTest {
 }
+    
+

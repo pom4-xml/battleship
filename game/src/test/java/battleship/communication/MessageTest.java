@@ -4,10 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import battleship.communication.Message;
 import battleship.communication.Message.MessageType;
 
-public class MessageTest {
+ class MessageTest {
 
     @Test
     void serializeAndDeserialize_simple() {
