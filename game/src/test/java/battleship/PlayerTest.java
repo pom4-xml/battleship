@@ -10,6 +10,7 @@ import java.util.ArrayList;
 class PlayerTest {
 
     private Player player1;
+    private Player player2;
     private Destroyer destroyer;
     private Submarine submarine;
     private Position d1, d2, s1, s2, s3;
