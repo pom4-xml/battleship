@@ -35,6 +35,10 @@ public class Position {
         Position p = (Position) obj;
         return x == p.x && y == p.y;
     }
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 
     @Override
     public int hashCode() {
