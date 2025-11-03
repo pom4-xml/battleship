@@ -3,7 +3,7 @@ package battleship.swing;
 
 import battleship.Table;
 import battleship.Position;
-import battleship.Battleship;
+import battleship.ship.Battleship;
 import battleship.Ship;
 
 
