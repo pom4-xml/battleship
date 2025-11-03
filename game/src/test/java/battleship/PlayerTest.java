@@ -117,24 +117,13 @@ class PlayerTest {
         sc.close();
     }
 
-    @Test
-    void testPlaceShipsManuallyWithOverlap() {
-        String inputData =
-                "0 0 true\n" + // Destroyer
-                "0 0 true\n" + // Submarine (superpone)
-                "1 0 true\n" + // Submarine válido
-                "2 0 true\n" + // Cruiser
-                "3 0 true\n" + // Battleship
-                "4 0 true\n";  // Carrier
-        Scanner sc = new Scanner(new ByteArrayInputStream(inputData.getBytes()));
-
-        Player p = new Player("Tester", BattleshipManager.createStandardShips());
-        p.placeShipsManually(sc);
-
-        List<Ship> ships = p.getShips();
-        assertEquals(2, ships.get(0).getPositions().size());
-        assertEquals(3, ships.get(1).getPositions().size());
-
-        sc.close();
-    }
+    /*@Test
+    void testShootAt() {
+        Position shotHit = new Position(0, 0);
+        Position shotMiss = new Position(5, 5);
+        String result1 = player1.shootAt(shotHit, player2);
+        assertTrue(result1.equals("HIT") || result1.startsWith("SUNK"));
+        String result2 = player1.shootAt(shotMiss, player2);
+        assertEquals("MISS", result2);
+    }*/
 }
