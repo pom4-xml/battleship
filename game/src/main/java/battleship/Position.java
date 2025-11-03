@@ -43,6 +43,15 @@ public class Position {
     }
 
     @Override
+    public boolean equals(Object object){
+        if(object == null) return false;
+        if(! (object instanceof Position) ) return false;
+        Position pos = (Position) object;
+        if(pos.getX() == this.x && pos.getY() == this.y) return true;
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
