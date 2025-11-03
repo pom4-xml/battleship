@@ -54,21 +54,32 @@ class TableTest {
         assertEquals("Postition cant't be null", ex.getMessage());
     }
 
-    @Test
-    void testShotShipsListNull() {
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> table.checkRivalShot(new Position(0, 0), null));
-        assertEquals("List of Ships can't be null", ex.getMessage());
-    }
+@Test
+void testShotShipsListNull() {
+    Position position = new Position(0, 0);
 
-    @Test
-    void testShotShipsListEmpty() {
-        IllegalStateException ex = assertThrows(
-                IllegalStateException.class,
-                () -> table.checkRivalShot(new Position(0, 0), new ArrayList<>()));
-        assertEquals("List of ships can't be empty", ex.getMessage());
-    }
+    IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException.class,
+        () -> table.checkRivalShot(position, null)
+    );
+
+    assertEquals("List of Ships can't be null", ex.getMessage());
+}
+
+
+  @Test
+void testShotShipsListEmpty() {
+    Position position = new Position(0, 0);
+    List<Ship> ships = new ArrayList<>();
+
+    IllegalStateException ex = assertThrows(
+        IllegalStateException.class,
+        () -> table.checkRivalShot(position, ships)
+    );
+
+    assertEquals("List of ships can't be empty", ex.getMessage());
+}
+
 
     @Test
     void testGetMatrixInitial() {
