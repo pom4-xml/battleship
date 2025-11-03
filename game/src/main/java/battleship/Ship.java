@@ -1,19 +1,21 @@
 package battleship;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class Ship {
-    int size;
-    List<Position> positions;
-    Set<Position> hits;
+    protected int size;
+    protected List<Position> positions;
+    protected Set<Position> hits;
 
     protected Ship(int size) {
         this.size = size;
+        this.positions = new ArrayList<>();
         this.hits = new HashSet<>();
     }
-    
+
     public boolean occupies(Position p) {
         return positions.contains(p);
     }
@@ -28,6 +30,16 @@ public abstract class Ship {
 
     public boolean isSunk() {
         return hits.size() == size;
+    }
+
+    public static List<Position> generatePositions(int row, int col, int size, boolean horizontal) {
+        List<Position> positions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            int x = horizontal ? row : row + i;
+            int y = horizontal ? col + i : col;
+            positions.add(new Position(x, y));
+        }
+        return positions;
     }
 
     // Getters and Setters
@@ -55,4 +67,5 @@ public abstract class Ship {
     public void setHits(Set<Position> hits) {
         this.hits = hits;
     }
+
 }

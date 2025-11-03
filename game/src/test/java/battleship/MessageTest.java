@@ -1,5 +1,5 @@
 package battleship;
 
-public class PositionTest {
+public class MessageTest {
     
 }

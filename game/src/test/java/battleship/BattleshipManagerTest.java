@@ -1,26 +1,36 @@
 package battleship;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import battleship.ship.*;
 
 class BattleshipManagerTest {
 
     @Test
     void testCreateStandardShips() {
         List<Ship> ships = BattleshipManager.createStandardShips();
-
         assertEquals(5, ships.size());
-
-        assertTrue(containsType(ships, Destroyer.class), "Falta Destroyer");
-        assertTrue(containsType(ships, Submarine.class), "Falta Submarine");
-        assertTrue(containsType(ships, Cruiser.class), "Falta Cruiser");
-        assertTrue(containsType(ships, Battleship.class), "Falta Battleship");
-        assertTrue(containsType(ships, Carrier.class), "Falta Carrier");
-    }
-    
-    private boolean containsType(List<Ship> ships, Class<? extends Ship> type) {
-        return ships.stream().anyMatch(type::isInstance);
+        boolean hasDestroyer = false, hasSubmarine = false, hasCruiser = false, hasBattleship = false,
+                hasCarrier = false;
+        for (Ship s : ships) {
+            if (s instanceof Destroyer)
+                hasDestroyer = true;
+            else if (s instanceof Submarine)
+                hasSubmarine = true;
+            else if (s instanceof Cruiser)
+                hasCruiser = true;
+            else if (s instanceof Battleship)
+                hasBattleship = true;
+            else if (s instanceof Carrier)
+                hasCarrier = true;
+        }
+        assertTrue(hasDestroyer);
+        assertTrue(hasSubmarine);
+        assertTrue(hasCruiser);
+        assertTrue(hasBattleship);
+        assertTrue(hasCarrier);
     }
 }

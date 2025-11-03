@@ -1,4 +1,6 @@
-package battleship;
+package battleship.ship;
+
+import battleship.Ship;
 
 public class Battleship extends Ship {
     public Battleship() {
