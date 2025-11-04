@@ -1,9 +1,12 @@
 package battleship;
 
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Player {
-
+    private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
     private String name;
     private List<Ship> ships;
 
@@ -12,93 +15,74 @@ public class Player {
         this.ships = ships;
     }
 
-    public String getName() { return name; }
-    public List<Ship> getShips() { return ships; }
+    public String getName() {
+        return name;
+    }
+
+    public List<Ship> getShips() {
+        return ships;
+    }
 
     public boolean hasLost() {
-        return ships.stream().allMatch(Ship::isSunk);
+        for (Ship s : ships) {
+            if (!s.isSunk()) return false;
+        }
+        return true;
     }
 
     public String shootAt(Position p, Player enemy) {
         for (Ship s : enemy.getShips()) {
             if (s.occupies(p)) {
                 s.registerHit(p);
-                return s.isSunk() ? "SUNK" : "HIT";
+                if (s.isSunk()) return "SUNK " + s.getClass().getSimpleName();
+                return "HIT";
             }
         }
         return "MISS";
     }
 
-    // Nuevo método para dibujar tablero
-    public void printBoard(boolean showShips) {
-        char[][] board = new char[10][10];
-
-        // Inicializar tablero con agua
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++)
-                board[i][j] = '~';
-
-        // Colocar barcos
-        if (showShips) {
-            for (Ship s : ships) {
-                for (Position p : s.getPositions()) {
-                    board[p.getX()][p.getY()] = 'B';
-                }
-            }
-        }
-
-        // Marcar hits y misses
-        for (Ship s : ships) {
-            for (Position p : s.getHits()) {
-                board[p.getX()][p.getY()] = 'X';
-            }
-        }
-
-        // Imprimir tablero
-        System.out.println("  0 1 2 3 4 5 6 7 8 9");
-        for (int i = 0; i < 10; i++) {
-            System.out.print(i + " ");
-            for (int j = 0; j < 10; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
+    public void placeShipsManually(Scanner sc) {
+        LOGGER.log(Level.INFO, "\n=== {0} placing ships ===", name);
+        for (Ship ship : ships) {
+            placeSingleShip(sc, ship);
         }
     }
 
-    public void placeShipsManually(java.util.Scanner sc) {
-        System.out.println("=== " + name + " coloca sus barcos ===");
-        for (Ship s : ships) {
-            boolean colocado = false;
-            while (!colocado) {
-                System.out.println("Coloca tu " + s.getClass().getSimpleName() + " (tamaño " + s.getSize() + ")");
-                System.out.print("Fila inicial (0-9): ");
-                int fila = sc.nextInt();
-                System.out.print("Columna inicial (0-9): ");
-                int col = sc.nextInt();
-                System.out.print("Horizontal? (true/false): ");
-                boolean horizontal = sc.nextBoolean();
+    private void placeSingleShip(Scanner sc, Ship ship) {
+        boolean placed = false;
+        while (!placed) {
+            int row = getInput(sc, "Starting row (0-9): ");
+            int col = getInput(sc, "Starting column (0-9): ");
+            boolean horizontal = getBooleanInput(sc, "Horizontal? (true/false): ");
 
-                List<Position> nuevasPos = Ship.generarPosiciones(fila, col, s.getSize(), horizontal);
+            List<Position> positions = Ship.generatePositions(row, col, ship.getSize(), horizontal);
 
-                boolean overlap = false;
-                for (Position p : nuevasPos) {
-                    for (Ship otro : ships) {
-                        if (otro.getPositions().contains(p)) {
-                            overlap = true;
-                            break;
-                        }
-                    }
-                    if (overlap) break;
-                }
-
-                if (!overlap) {
-                    s.setPositions(nuevasPos);
-                    colocado = true;
-                    printBoard(true); // Mostrar tablero después de colocar cada barco
-                } else {
-                    System.out.println("Error: el barco se superpone con otro. Intenta de nuevo.");
-                }
+            if (isValidPlacement(positions)) {
+                ship.setPositions(positions);
+                placed = true;
+            } else {
+                LOGGER.log(Level.WARNING, "Invalid position or overlapping ships. Try again.");
             }
         }
+    }
+
+    private boolean isValidPlacement(List<Position> positions) {
+        for (Position p : positions) {
+            if (!Position.isValid(p.getX(), p.getY())) return false;
+            for (Ship other : ships) {
+                if (other.getPositions().contains(p)) return false;
+            }
+        }
+        return true;
+    }
+
+    private int getInput(Scanner sc, String message) {
+        LOGGER.log(Level.INFO, message);
+        return sc.nextInt();
+    }
+
+    private boolean getBooleanInput(Scanner sc, String message) {
+        LOGGER.log(Level.INFO, message);
+        return sc.nextBoolean();
     }
 }
