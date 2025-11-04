@@ -4,18 +4,16 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public abstract class NetworkConnection {
+abstract class NetworkConnection implements Connection {
     protected Scanner scanner;
     protected PrintWriter out;
     protected BufferedReader in;
     private boolean isConnected;
-    
-    public NetworkConnection() {
+
+    protected NetworkConnection() {
         this.scanner = new Scanner(System.in);
         isConnected = false;
     }
-
-    public abstract void start();
 
     protected void receiveMessages() {
         try {
@@ -32,12 +30,7 @@ public abstract class NetworkConnection {
     }
 
     public void sendMessage(String msg) {
-        System.out.println("Type your messages (type 'bye' to exit):");
-        String userInput;
-        while (!(userInput = scanner.nextLine()).equalsIgnoreCase("bye")) {
-            out.println(userInput);
-        }
-        out.println("bye");
+        out.println(msg);
     }
 
     protected void setupStreams(Socket socket) throws IOException {
@@ -51,13 +44,12 @@ public abstract class NetworkConnection {
         receiveThread.start();
     }
 
-    
-
     protected abstract String getRemoteLabel();
 
     public Scanner getScanner() {
         return scanner;
     }
+
     public boolean isConnected() {
         return isConnected;
     }
