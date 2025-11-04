@@ -9,7 +9,6 @@ public class SimulationBoard {
         this.ships = ships;
     }
 
-    // Devuelve "HIT", "MISS" o "SUNK"
     public String processShot(Position p) {
         for (Ship ship : ships) {
             if (ship.occupies(p)) {
@@ -21,7 +20,10 @@ public class SimulationBoard {
         return "MISS";
     }
 
-    public boolean allShipsSunk() {
-        return ships.stream().allMatch(Ship::isSunk);
+    public boolean hasShipsRemaining() {
+        for (Ship s : ships) {
+            if (!s.isSunk()) return true;
+        }
+        return false;
     }
 }

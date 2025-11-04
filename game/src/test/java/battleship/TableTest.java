@@ -1,82 +1,93 @@
 package battleship;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import battleship.ship.Battleship;
+
 class TableTest {
-    
-    Table table;
-    List<Ship> myListOfShips;
-    
+
+    private Table table;
+    private List<Ship> emptyShips;
+    private Ship ship;
+
     @BeforeEach
-    void setup(){
+    void setup() {
         table = new Table();
-        myListOfShips = new ArrayList<>();
-       // Ship ship = new Battleship();
-        Position p1 = new Position(0, 0);
-        Position p2 = new Position(1, 0);
-        Position p3 = new Position(2, 0);
-        Position p4 = new Position(3, 0);
-        List<Position> lPositions = new ArrayList<>();
-        lPositions.add(p1);
-        lPositions.add(p2);
-        lPositions.add(p3);
-        lPositions.add(p4);
-      //  ship.setPositions(lPositions);
+        emptyShips = new ArrayList<>();
 
-        //myListOfShips.add(ship);
+        ship = new Battleship();
+        List<Position> positions = new ArrayList<>();
+        positions.add(new Position(0, 0));
+        positions.add(new Position(1, 0));
+        positions.add(new Position(2, 0));
+        positions.add(new Position(3, 0));
+        ship.setPositions(positions);
+
+        emptyShips.add(ship);
     }
 
     @Test
-    void checkRivalShot(){
-        boolean result1 = table.checkRivalShot(new Position(0, 0), myListOfShips);
-        assertTrue(result1);
-        boolean result2 = table.checkRivalShot(new Position(0, 1), myListOfShips);
-        assertFalse(result2);
+    void testShotHit() {
+        boolean result = table.checkRivalShot(new Position(0, 0), emptyShips);
+        assertTrue(result);
+        assertEquals(2, table.getMatrix()[0][0]);
     }
 
     @Test
-    void checkRivalShot_PosNull(){
-        Position position = null;
+    void testShotMiss() {
+        boolean result = table.checkRivalShot(new Position(0, 1), emptyShips);
+        assertFalse(result);
+        assertEquals(1, table.getMatrix()[0][1]);
+    }
+
+    @Test
+    void testShotPositionNull() {
         IllegalArgumentException ex = assertThrows(
-            IllegalArgumentException.class,
-            ()-> table.checkRivalShot(position, myListOfShips));
-        assertEquals("Postition cant't be null",ex.getMessage());
-
+                IllegalArgumentException.class,
+                () -> table.checkRivalShot(null, emptyShips));
+        assertEquals("Postition cant't be null", ex.getMessage());
     }
+
+@Test
+void testShotShipsListNull() {
+    Position position = new Position(0, 0);
+
+    IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException.class,
+        () -> table.checkRivalShot(position, null)
+    );
+
+    assertEquals("List of Ships can't be null", ex.getMessage());
+}
+
+
+  @Test
+void testShotShipsListEmpty() {
+    Position position = new Position(0, 0);
+    List<Ship> ships = new ArrayList<>();
+
+    IllegalStateException ex = assertThrows(
+        IllegalStateException.class,
+        () -> table.checkRivalShot(position, ships)
+    );
+
+    assertEquals("List of ships can't be empty", ex.getMessage());
+}
+
 
     @Test
-    void checkRivalShot_ShipListNull(){
-        List<Ship> nullList = null;
-        IllegalArgumentException ex = assertThrows(
-            IllegalArgumentException.class,
-            ()-> table.checkRivalShot(new Position(0, 0), nullList));
-        assertEquals("List of Ships can't be null",ex.getMessage());
-
+    void testGetMatrixInitial() {
+        int[][] matrix = table.getMatrix();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                assertEquals(0, matrix[i][j]);
+            }
+        }
     }
-
-    @Test
-    void checkRivalShot_ShipListIsEmpty(){
-        List<Ship> emptyList = new ArrayList<>();
-        IllegalStateException ex = assertThrows(
-             IllegalStateException.class,
-            ()-> table.checkRivalShot(new Position(0, 0), emptyList));
-        assertEquals("List of ships can't be empty",ex.getMessage());
-
-    }
-
-    @Test
-    void getterMatrix(){
-        int [][] matriz = table.getMatrix();
-        assertEquals(0,matriz[0][0]);
-    }
-
-
-
-
 }
