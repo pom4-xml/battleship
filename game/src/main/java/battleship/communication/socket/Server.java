@@ -17,17 +17,20 @@ public class Server extends NetworkConnection {
             System.out.println("Server started on port " + port);
             System.out.println("Waiting for client connection...");
             
-            try (Socket clientSocket = serverSocket.accept()) {
-                System.out.println("Client connected!");
-                this.setConnected(true);
-                setupStreams(clientSocket);
-                startCommunication();
-                
-            } catch (IOException e) {
-                System.err.println("Client connection error: " + e.getMessage());
-            }
+            acceptClientConnection(serverSocket);
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());
+        }
+    }
+
+    private void acceptClientConnection(ServerSocket serverSocket) {
+        try (Socket clientSocket = serverSocket.accept()) {
+            System.out.println("Client connected!");
+            this.setConnected(true);
+            setupStreams(clientSocket);
+            
+        } catch (IOException e) {
+            System.err.println("Client connection error: " + e.getMessage());
         }
     }
 

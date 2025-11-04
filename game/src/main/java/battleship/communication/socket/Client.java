@@ -19,7 +19,6 @@ public class Client extends NetworkConnection {
             System.out.println("Connected to server at " + hostname + ":" + port);
             this.setConnected(true);
             setupStreams(socket);
-            startCommunication();
             
         } catch (IOException e) {
             System.err.println("Client error: " + e.getMessage());
