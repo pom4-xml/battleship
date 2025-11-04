@@ -1,7 +1,7 @@
 package battleship;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -10,32 +10,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SimulationGameControllerTest {
 
-    private SimulationGameController controller;
-
-    @BeforeEach
-    void setUp() {
-        // no crear el controller aquí si depende de System.in
-    }
-/* 
-    @Test
-    void testGameRunsWithSimulatedInput() {
-        String input = ""
-                + "0 0 true\n"
-                + "1 0 true\n"
-                + "0 0 true\n"
-                + "1 0 true\n"
-                + "0 0\n"
-                + "0 0\n";
-
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "0 0 true\n1 0 true\n0 0 true\n1 0 true\n0 0\n0 0\n",
+            "0 1 true\n2 2 true\n0 1 true\n2 2 true\n1 1\n1 0\n"
+    })
+    void testControllerInitializes(String inputSequence) {
         InputStream originalIn = System.in;
         try {
-            System.setIn(new ByteArrayInputStream(input.getBytes()));
-            controller = new SimulationGameController(); // crear después de setIn
+            System.setIn(new ByteArrayInputStream(inputSequence.getBytes()));
+            SimulationGameController controller = new SimulationGameController();
             controller.startGame();
-            assertNotNull(controller, "Controller se inicializó correctamente");
+            assertNotNull(controller, "Controller should initialize correctly");
         } finally {
             System.setIn(originalIn);
         }
     }
-        */
 }
