@@ -11,12 +11,18 @@ class SimulationMainTest {
 
     @Test
     void testMainRunsWithoutException() {
-        String simulatedInput = "0 0 true\n1 0 true\n0 0 true\n1 0 true\n0 0\n0 0\n";
+        String simulatedInput =
+                "0 0 true\n" +
+                "1 0 true\n" +
+                "0 0 true\n" +
+                "1 0 true\n" +
+                "0 0\n" +
+                "0 0\n" +
+                "1 0\n" +
+                "1 0\n";
+
         InputStream originalIn = System.in;
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(simulatedInput.getBytes());
-        System.setIn(bais);
-
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
         try {
             assertDoesNotThrow(() -> SimulationMain.main(new String[]{}),
                     "The main method should run without throwing exceptions");
