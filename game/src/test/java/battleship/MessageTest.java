@@ -1,6 +1,0 @@
-package battleship;
-
-class MessageTest {
-}
-    
-
