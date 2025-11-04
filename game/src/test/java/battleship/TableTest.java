@@ -13,13 +13,13 @@ import battleship.ship.Battleship;
 class TableTest {
 
     private Table table;
-    private List<Ship> ships;
+    private List<Ship> emptyShips;
     private Ship ship;
 
     @BeforeEach
     void setup() {
         table = new Table();
-        ships = new ArrayList<>();
+        emptyShips = new ArrayList<>();
 
         ship = new Battleship();
         List<Position> positions = new ArrayList<>();
@@ -29,19 +29,19 @@ class TableTest {
         positions.add(new Position(3, 0));
         ship.setPositions(positions);
 
-        ships.add(ship);
+        emptyShips.add(ship);
     }
 
     @Test
     void testShotHit() {
-        boolean result = table.checkRivalShot(new Position(0, 0), ships);
+        boolean result = table.checkRivalShot(new Position(0, 0), emptyShips);
         assertTrue(result);
         assertEquals(2, table.getMatrix()[0][0]);
     }
 
     @Test
     void testShotMiss() {
-        boolean result = table.checkRivalShot(new Position(0, 1), ships);
+        boolean result = table.checkRivalShot(new Position(0, 1), emptyShips);
         assertFalse(result);
         assertEquals(1, table.getMatrix()[0][1]);
     }
@@ -50,7 +50,7 @@ class TableTest {
     void testShotPositionNull() {
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> table.checkRivalShot(null, ships));
+                () -> table.checkRivalShot(null, emptyShips));
         assertEquals("Postition cant't be null", ex.getMessage());
     }
 
