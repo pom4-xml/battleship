@@ -1,21 +1,16 @@
 package battleship;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SimulationGameControllerTest {
-
+    /*
     private SimulationGameController controller;
 
     @BeforeEach
     void setUp() {
         // no crear el controller aquí si depende de System.in
     }
+        */
 /* 
     @Test
     void testGameRunsWithSimulatedInput() {
