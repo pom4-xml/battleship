@@ -17,8 +17,11 @@ class SimulationGameControllerTest {
     })
     void testControllerInitializes(String inputSequence) {
         InputStream originalIn = System.in;
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(inputSequence.getBytes());
+        System.setIn(bais);
+
         try {
-            System.setIn(new ByteArrayInputStream(inputSequence.getBytes()));
             SimulationGameController controller = new SimulationGameController();
             controller.startGame();
             assertNotNull(controller, "Controller should initialize correctly");

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -18,8 +17,9 @@ class SimulationMainTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(simulatedInput.getBytes());
         System.setIn(bais);
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            assertDoesNotThrow(() -> SimulationMain.main(new String[]{}));
+        try {
+            assertDoesNotThrow(() -> SimulationMain.main(new String[]{}),
+                    "The main method should run without throwing exceptions");
         } finally {
             System.setIn(originalIn);
         }
