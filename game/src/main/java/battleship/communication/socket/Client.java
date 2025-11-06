@@ -3,7 +3,7 @@ package battleship.communication.socket;
 import java.io.*;
 import java.net.*;
 
-public class Client extends NetworkConnection {
+public class Client extends BaseConnection {
     private String hostname;
     private int port;
 
@@ -14,14 +14,17 @@ public class Client extends NetworkConnection {
     }
 
     @Override
-    public void start() {
-        try (Socket socket = new Socket(hostname, port)) {
-            System.out.println("Connected to server at " + hostname + ":" + port);
-            this.setConnected(true);
-            setupStreams(socket);
-            
+    protected Socket connect() throws IOException {
+        System.out.println("Connecting to server at " + hostname + ":" + port);
+        return new Socket(hostname, port);
+    }
+
+    public boolean canConnect(int timeoutMillis) {
+        try (Socket testSocket = new Socket()) {
+            testSocket.connect(new InetSocketAddress(hostname, port), timeoutMillis);
+            return true;
         } catch (IOException e) {
-            System.err.println("Client error: " + e.getMessage());
+            return false;
         }
     }
 
