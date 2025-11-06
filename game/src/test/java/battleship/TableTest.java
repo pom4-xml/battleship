@@ -57,9 +57,11 @@ class TableTest {
     @Test
     void testShotShipsListNull() {
         Position position = new Position(0, 0);
+
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> table.checkRivalShot(position, null));
+
         assertEquals("List of Ships can't be null", ex.getMessage());
     }
 
@@ -67,9 +69,11 @@ class TableTest {
     void testShotShipsListEmpty() {
         Position position = new Position(0, 0);
         List<Ship> ships = new ArrayList<>();
+
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
                 () -> table.checkRivalShot(position, ships));
+
         assertEquals("List of ships can't be empty", ex.getMessage());
     }
 
@@ -82,6 +86,8 @@ class TableTest {
             }
         }
     }
+
+    // my ships
 
     @Test
     void testDrawMyPlayerTable_CorrectPositions() {
@@ -113,15 +119,16 @@ class TableTest {
 
     @Test
     void testDrawMyPlayerTable_EmptyListThrows() {
+        List<Ship> emptyList = new ArrayList<>();
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
-                () -> table.drowMyPlayerTable(new ArrayList<>()));
+                () -> table.drowMyPlayerTable(emptyList));
         assertEquals("List of ships can't be empty", ex.getMessage());
     }
 
     @Test
     void testDrawMyPlayerTable_MatrixNotCleanThrows() {
-        table.getMyPlayerMatrix()[0][0] = 1;
+        table.getMyPlayerMatrix()[0][0] = 1; // simula matriz no vacía
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
                 () -> table.drowMyPlayerTable(emptyShips));
@@ -136,16 +143,18 @@ class TableTest {
         java.lang.reflect.Field fieldY = Position.class.getDeclaredField("y");
         fieldX.setAccessible(true);
         fieldY.setAccessible(true);
+
         fieldX.setInt(invalidPosition, 11);
         fieldY.setInt(invalidPosition, 0);
 
         Ship invalidShip = new Battleship();
-        invalidShip.setPositions(java.util.Collections.singletonList(invalidPosition));
+        invalidShip.setPositions(java.util.Arrays.asList(invalidPosition));
+
+        List<Ship> singleInvalidShip = java.util.Collections.singletonList(invalidShip);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> table.drowMyPlayerTable(java.util.Collections.singletonList(invalidShip)));
-
+                () -> table.drowMyPlayerTable(singleInvalidShip));
         assertTrue(ex.getMessage().contains("Position out of bounds"));
     }
 }
