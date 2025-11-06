@@ -1,6 +1,7 @@
 package battleship.swing;
 
 import battleship.Table;
+
 import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,29 +26,38 @@ class BattleshipFrameTest extends EasyMockSupport {
 
     @Test
     void testFrameInitialization() {
-        //Frame not null
-        assertNotNull(frame);
+        assertNotNull(frame, "Frame should not be null");
 
-        // Ver su el panel se ha cargado
-        assertTrue(frame.getContentPane().getComponentCount() > 0);
-        assertTrue(frame.getContentPane().getComponent(0) instanceof BoardPanel);
+        // Contenedor principal
+        JPanel contentPane = (JPanel) frame.getContentPane();
+        assertTrue(contentPane.getComponentCount() > 0);
 
-        // Ver si board panel tiene table
-        BoardPanel panel = (BoardPanel) frame.getContentPane().getComponent(0);
-        assertEquals(table, panel.getTable());
+        // Sub paneles
+        assertEquals(2, contentPane.getComponentCount());
+        assertTrue(contentPane.getComponent(0) instanceof PlayerBoardPanel);
+        assertTrue(contentPane.getComponent(1) instanceof BoardPanel);
     }
 
     @Test
-    void testRefreshBoard_CallsRepaint() throws Exception{
-        BoardPanel mockPanel = createMock(BoardPanel.class);
-        mockPanel.repaint();
+    void testRefreshBoard_CallsRepaint() throws Exception {
+        BoardPanel mockRivalPanel = createMock(BoardPanel.class);
+        PlayerBoardPanel mockPlayerPanel = createMock(PlayerBoardPanel.class);
+
+        mockRivalPanel.repaint();
+        EasyMock.expectLastCall().once();
+
+        mockPlayerPanel.repaint();
         EasyMock.expectLastCall().once();
 
         replayAll();
 
-        Field field = BattleshipFrame.class.getDeclaredField("boardPanel");
-        field.setAccessible(true);
-        field.set(frame, mockPanel);
+        Field rivalField = BattleshipFrame.class.getDeclaredField("rivalPanel");
+        rivalField.setAccessible(true);
+        rivalField.set(frame, mockRivalPanel);
+
+        Field playerField = BattleshipFrame.class.getDeclaredField("playerPanel");
+        playerField.setAccessible(true);
+        playerField.set(frame, mockPlayerPanel);
 
         frame.refreshBoard();
 
@@ -60,8 +70,13 @@ class BattleshipFrameTest extends EasyMockSupport {
         assertEquals(WindowConstants.EXIT_ON_CLOSE, frame.getDefaultCloseOperation());
         assertTrue(frame.isVisible());
 
-        assertEquals(10*cellSize, frame.getWidth());
-        assertEquals(10*cellSize, frame.getHeight());
+        int expectedWidth = 2 * 10 * cellSize;
+        int expectedHeight = 10 * cellSize + cellSize; // +cellSize margen extra
+
+        assertEquals(expectedWidth, frame.getWidth());
+        assertEquals(expectedHeight, frame.getHeight());
+
+        // Posición fija establecida en el constructor
         assertEquals(500, frame.getX());
         assertEquals(500, frame.getY());
     }
