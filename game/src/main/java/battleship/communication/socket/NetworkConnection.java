@@ -57,9 +57,4 @@ abstract class NetworkConnection implements Connection {
     public void setConnected(boolean isConnected) {
         this.isConnected = isConnected;
     }
-
-    @Override
-    public BufferedReader getInputStream() {
-        return in;
-    }
 }
