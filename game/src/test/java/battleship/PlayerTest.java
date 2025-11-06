@@ -7,7 +7,6 @@ import battleship.ship.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 class PlayerTest {
@@ -93,7 +92,7 @@ void testShootAtHitMissSunk() {
 
     @Test
     void testPlaceShipsManually() {
-        Destroyer destroyer = new Destroyer();
+        destroyer = new Destroyer();
 
         ArrayList<Ship> ships = new ArrayList<>(Arrays.asList(destroyer));
 
