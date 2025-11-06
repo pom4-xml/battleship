@@ -22,7 +22,6 @@ public class SimulationGameController {
             gameLoop(scanner);
         } catch (Exception e) {
             System.err.println("⚠ Error during game: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
