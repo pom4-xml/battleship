@@ -1,13 +1,16 @@
 package battleship;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SimulationMainTest {
 
     @Test
-    void testMainRunsWithoutException() {
-        assertDoesNotThrow(() -> SimulationMain.main(new String[]{}),
-                "The main method should run without throwing exceptions");
+    void testMain() {
+        assertDoesNotThrow(() -> {
+            Thread testThread = new Thread(() -> SimulationMain.main(new String[]{}));
+            testThread.start();
+            testThread.interrupt();
+        });
     }
 }

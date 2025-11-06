@@ -1,5 +1,6 @@
 package battleship;
 
+import java.io.PrintStream;
 import java.util.*;
 
 public class SimulationGameController {
@@ -22,6 +23,7 @@ public class SimulationGameController {
             gameLoop(scanner);
         } catch (Exception e) {
             System.err.println("⚠ Error during game: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
