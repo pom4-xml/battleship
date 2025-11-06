@@ -54,32 +54,28 @@ class TableTest {
         assertEquals("Postition cant't be null", ex.getMessage());
     }
 
-@Test
-void testShotShipsListNull() {
-    Position position = new Position(0, 0);
+    @Test
+    void testShotShipsListNull() {
+        Position position = new Position(0, 0);
 
-    IllegalArgumentException ex = assertThrows(
-        IllegalArgumentException.class,
-        () -> table.checkRivalShot(position, null)
-    );
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> table.checkRivalShot(position, null));
 
-    assertEquals("List of Ships can't be null", ex.getMessage());
-}
+        assertEquals("List of Ships can't be null", ex.getMessage());
+    }
 
+    @Test
+    void testShotShipsListEmpty() {
+        Position position = new Position(0, 0);
+        List<Ship> ships = new ArrayList<>();
 
-  @Test
-void testShotShipsListEmpty() {
-    Position position = new Position(0, 0);
-    List<Ship> ships = new ArrayList<>();
+        IllegalStateException ex = assertThrows(
+                IllegalStateException.class,
+                () -> table.checkRivalShot(position, ships));
 
-    IllegalStateException ex = assertThrows(
-        IllegalStateException.class,
-        () -> table.checkRivalShot(position, ships)
-    );
-
-    assertEquals("List of ships can't be empty", ex.getMessage());
-}
-
+        assertEquals("List of ships can't be empty", ex.getMessage());
+    }
 
     @Test
     void testGetMatrixInitial() {
@@ -90,4 +86,76 @@ void testShotShipsListEmpty() {
             }
         }
     }
+
+    // my ships
+
+    @Test
+    void testDrawMyPlayerTable_CorrectPositions() {
+        table.drowMyPlayerTable(emptyShips);
+        int[][] myMatrix = table.getMyPlayerMatrix();
+
+        for (Position p : ship.getPositions()) {
+            assertEquals(1, myMatrix[p.getX()][p.getY()],
+                    String.format("Expected ship at (%d,%d)", p.getX(), p.getY()));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (!ship.getPositions().contains(new Position(i, j))) {
+                    assertEquals(0, myMatrix[i][j],
+                            String.format("Expected water at (%d,%d)", i, j));
+                }
+            }
+        }
+    }
+
+    @Test
+    void testDrawMyPlayerTable_NullListThrows() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> table.drowMyPlayerTable(null));
+        assertEquals("List ships can't be null", ex.getMessage());
+    }
+
+    @Test
+    void testDrawMyPlayerTable_EmptyListThrows() {
+        IllegalStateException ex = assertThrows(
+                IllegalStateException.class,
+                () -> table.drowMyPlayerTable(new ArrayList<>()));
+        assertEquals("List of ships can't be empty", ex.getMessage());
+    }
+
+    @Test
+    void testDrawMyPlayerTable_MatrixNotCleanThrows() {
+        table.getMyPlayerMatrix()[0][0] = 1; // simula matriz no vacía
+        IllegalStateException ex = assertThrows(
+                IllegalStateException.class,
+                () -> table.drowMyPlayerTable(emptyShips));
+        assertEquals("Matrix must be clean", ex.getMessage());
+    }
+
+    @Test
+void testDrawMyPlayerTable_PositionOutOfBoundsThrows() throws Exception {
+    Position invalidPosition = new Position(0, 0);
+
+    java.lang.reflect.Field fieldX = Position.class.getDeclaredField("x");
+    java.lang.reflect.Field fieldY = Position.class.getDeclaredField("y");
+    fieldX.setAccessible(true);
+    fieldY.setAccessible(true);
+
+    fieldX.setInt(invalidPosition, 11);
+    fieldY.setInt(invalidPosition, 0);
+
+
+    Ship invalidShip = new Battleship();
+    invalidShip.setPositions(java.util.Arrays.asList(invalidPosition));
+
+    IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException.class,
+        () -> table.drowMyPlayerTable(java.util.Collections.singletonList(invalidShip))
+    );
+
+    assertTrue(ex.getMessage().contains("Position out of bounds"));
+}
+
 }
