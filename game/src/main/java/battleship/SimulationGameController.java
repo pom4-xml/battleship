@@ -1,64 +1,79 @@
 package battleship;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SimulationGameController {
-    private static final Logger LOGGER = Logger.getLogger(SimulationGameController.class.getName());
     private Player player1;
     private Player player2;
     private boolean player1Turn;
-    private final Scanner scanner;
 
     public SimulationGameController() {
-        scanner = new Scanner(System.in);
-        player1Turn = true;
+        this.player1Turn = true;
     }
 
     public void startGame() {
-        LOGGER.info("=== Welcome to Battleship ===");
+        System.out.println("=== Welcome to Battleship ===");
         player1 = new Player("Player 1", BattleshipManager.createStandardShips());
         player2 = new Player("Player 2", BattleshipManager.createStandardShips());
-        placeShips(player1);
-        placeShips(player2);
-        gameLoop();
-        scanner.close();
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            placeShips(player1, scanner);
+            placeShips(player2, scanner);
+            gameLoop(scanner);
+        } catch (Exception e) {
+            System.err.println("⚠ Error during game: " + e.getMessage());
+        }
     }
 
-    private void placeShips(Player player) {
-        LOGGER.log(Level.INFO, "\n--- {0} placing ships ---", player.getName());
+    private void placeShips(Player player, Scanner scanner) {
+        System.out.println("\n--- " + player.getName() + " placing ships ---");
         for (Ship ship : player.getShips()) {
-            while (!tryPlaceShip(player, ship)) {
-                LOGGER.info("Invalid placement. Try again.");
+            boolean placed = false;
+            while (!placed) {
+                placed = tryPlaceShip(player, ship, scanner);
+                if (!placed) System.out.println("Invalid placement. Try again.");
             }
             printBoard(player, true);
         }
     }
 
-    private boolean tryPlaceShip(Player player, Ship ship) {
-        LOGGER.log(Level.INFO, "Place your {0} (size {1})",
-                new Object[]{ship.getClass().getSimpleName(), ship.getSize()});
-        LOGGER.info("Starting row (0-9): ");
-        int row = scanner.nextInt();
-        LOGGER.info("Starting column (0-9): ");
-        int col = scanner.nextInt();
-        LOGGER.info("Horizontal? (true/false): ");
-        boolean horizontal = scanner.nextBoolean();
+    private boolean tryPlaceShip(Player player, Ship ship, Scanner scanner) {
+        System.out.println("Place your " + ship.getClass().getSimpleName() + " (size " + ship.getSize() + ")");
+        int row = safeNextInt(scanner, "Starting row (0-9): ");
+        int col = safeNextInt(scanner, "Starting column (0-9): ");
+        boolean horizontal = safeNextBoolean(scanner, "Horizontal? (true/false): ");
 
         if (!isPlacementValid(row, col, ship.getSize(), horizontal)) {
-            LOGGER.info("Ship goes out of bounds. Try again.");
+            System.out.println("Ship goes out of bounds. Try again.");
             return false;
         }
 
         List<Position> positions = Ship.generatePositions(row, col, ship.getSize(), horizontal);
         if (isOverlapping(player, positions)) {
-            LOGGER.info("Ship overlaps with another ship. Try again.");
+            System.out.println("Ship overlaps with another ship. Try again.");
             return false;
         }
 
         ship.setPositions(positions);
         return true;
+    }
+
+    private int safeNextInt(Scanner scanner, String prompt) {
+        System.out.print(prompt);
+        while (!scanner.hasNextInt()) {
+            System.out.print("Invalid input. " + prompt);
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
+
+    private boolean safeNextBoolean(Scanner scanner, String prompt) {
+        System.out.print(prompt);
+        while (!scanner.hasNextBoolean()) {
+            System.out.print("Invalid input. " + prompt);
+            scanner.next();
+        }
+        return scanner.nextBoolean();
     }
 
     private boolean isPlacementValid(int row, int col, int size, boolean horizontal) {
@@ -78,33 +93,32 @@ public class SimulationGameController {
         return false;
     }
 
-    private void gameLoop() {
+    private void gameLoop(Scanner scanner) {
         while (true) {
             Player current = player1Turn ? player1 : player2;
             Player enemy = player1Turn ? player2 : player1;
 
-            LOGGER.log(Level.INFO, "\n=== {0}''s turn ===", current.getName());
+            System.out.println("\n=== " + current.getName() + "'s turn ===");
             printBoard(enemy, false);
 
-            Position shot = askForShot();
+            Position shot = askForShot(scanner);
             String result = current.shootAt(shot, enemy);
-            LOGGER.log(Level.INFO, "Result: {0}", result);
+            System.out.println("Result: " + result);
 
             if (enemy.hasLost()) {
-                LOGGER.log(Level.INFO, "\n🏆 {0} wins the game!", current.getName());
+                System.out.println("\n🏆 " + current.getName() + " wins the game!");
                 break;
             }
             player1Turn = !player1Turn;
         }
     }
 
-    private Position askForShot() {
+    private Position askForShot(Scanner scanner) {
         while (true) {
-            LOGGER.info("Enter coordinates (row column): ");
-            int x = scanner.nextInt();
-            int y = scanner.nextInt();
+            int x = safeNextInt(scanner, "Enter row (0-9): ");
+            int y = safeNextInt(scanner, "Enter column (0-9): ");
             if (!Position.isValid(x, y)) {
-                LOGGER.info("Coordinates out of bounds. Try again.");
+                System.out.println("Coordinates out of bounds. Try again.");
                 continue;
             }
             return new Position(x, y);
@@ -114,40 +128,24 @@ public class SimulationGameController {
     private void printBoard(Player player, boolean showShips) {
         char[][] grid = new char[10][10];
         for (int i = 0; i < 10; i++) Arrays.fill(grid[i], '.');
-        fillGridWithShips(player, grid, showShips);
-
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info(buildBoardString(player, showShips, grid));
-        }
-    }
-
-    private void fillGridWithShips(Player player, char[][] grid, boolean showShips) {
         for (Ship s : player.getShips()) {
             for (Position p : s.getPositions()) {
-                char symbol;
                 if (s.getHits().contains(p)) {
-                    symbol = 'X';
+                    grid[p.getX()][p.getY()] = 'X';
                 } else if (showShips) {
-                    symbol = 'O';
-                } else {
-                    symbol = grid[p.getX()][p.getY()];
+                    grid[p.getX()][p.getY()] = 'O';
                 }
-                grid[p.getX()][p.getY()] = symbol;
             }
         }
-    }
 
-    private String buildBoardString(Player player, boolean showShips, char[][] grid) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%n%s %s%n", player.getName(), showShips ? "(your ships)" : "board"));
-        sb.append("   ");
-        for (int j = 0; j < 10; j++) sb.append(String.format("%d ", j));
-        sb.append("\n");
+        System.out.println("\n" + player.getName() + (showShips ? " (your ships)" : " (enemy board)"));
+        System.out.print("   ");
+        for (int j = 0; j < 10; j++) System.out.print(j + " ");
+        System.out.println();
         for (int i = 0; i < 10; i++) {
-            sb.append(String.format("%d ", i));
-            for (int j = 0; j < 10; j++) sb.append(String.format("%c ", grid[i][j]));
-            sb.append("\n");
+            System.out.print(i + " ");
+            for (int j = 0; j < 10; j++) System.out.print(grid[i][j] + " ");
+            System.out.println();
         }
-        return sb.toString();
     }
 }

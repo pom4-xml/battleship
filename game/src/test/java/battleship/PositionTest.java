@@ -40,7 +40,6 @@ class PositionTest {
     @Test
     void testNotEqualDifferentObject() {
         Position p = new Position(2, 2);
-
         assertNotEquals("string", p);
         assertNotEquals(null, p);
     }
