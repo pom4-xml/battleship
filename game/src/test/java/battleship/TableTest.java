@@ -150,9 +150,11 @@ class TableTest {
         Ship invalidShip = new Battleship();
         invalidShip.setPositions(java.util.Arrays.asList(invalidPosition));
 
+        java.util.List<Ship> ships = java.util.Collections.singletonList(invalidShip);
+        
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> table.drowMyPlayerTable(java.util.Collections.singletonList(invalidShip)));
+                () -> table.drowMyPlayerTable(ships));
 
         assertTrue(ex.getMessage().contains("Position out of bounds"));
     }

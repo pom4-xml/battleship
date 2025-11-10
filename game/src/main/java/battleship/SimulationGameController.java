@@ -37,14 +37,14 @@ public class SimulationGameController {
     public void placeShips(Player player, Table table) {
         System.out.println("\n--- " + player.getName() + " placing ships ---");
         for (Ship ship : player.getShips()) {
-            while (!tryPlaceShip(player, table, ship)) {
+            while (!tryPlaceShip(player, ship)) {
                 System.out.println("Invalid placement. Try again.");
             }
         }
         table.drowMyPlayerTable(player.getShips());
     }
 
-    private boolean tryPlaceShip(Player player, Table table, Ship ship) {
+    private boolean tryPlaceShip(Player player, Ship ship) {
         System.out.printf("Place your %s (size %d)%n",
                 ship.getClass().getSimpleName(), ship.getSize());
         System.out.print("Starting row (0-9): ");
