@@ -3,7 +3,6 @@ package battleship;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import battleship.swing.BattleshipFrame;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
