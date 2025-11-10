@@ -165,14 +165,14 @@ class PlayerTest {
         player.placeShipsManually(scanner);
         
         // Verify destroyer placement
-        Ship destroyer = player.getShips().get(0);
-        assertNotNull(destroyer.getPositions());
-        assertEquals(2, destroyer.getPositions().size());
+        Ship testDestroyer = player.getShips().get(0);
+        assertNotNull(testDestroyer.getPositions());
+        assertEquals(2, testDestroyer.getPositions().size());
         
         // Verify submarine placement
-        Ship submarine = player.getShips().get(1);
-        assertNotNull(submarine.getPositions());
-        assertEquals(3, submarine.getPositions().size());
+        Ship testSubmarine = player.getShips().get(1);
+        assertNotNull(testSubmarine.getPositions());
+        assertEquals(3, testSubmarine.getPositions().size());
     }
 
     @Test
