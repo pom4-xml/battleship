@@ -25,10 +25,10 @@ public class PlayerBoardPanel extends JPanel {
                 if (value == 1) g.setColor(Color.GRAY);  // barco
                 else g.setColor(Color.CYAN);             // agua
 
-                g.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                g.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
 
                 g.setColor(Color.BLACK);
-                g.drawRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                g.drawRect(y * cellSize, x * cellSize, cellSize, cellSize);
             }
         }
     }
