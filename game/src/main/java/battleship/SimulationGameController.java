@@ -1,49 +1,63 @@
 package battleship;
 
 import java.util.*;
+import battleship.swing.BattleshipFrame;
 
 public class SimulationGameController {
     private Player player1;
     private Player player2;
+    private Table table1;
+    private Table table2;
     private boolean player1Turn;
+    final Scanner scanner;
 
     public SimulationGameController() {
-        this.player1Turn = true;
+        scanner = new Scanner(System.in);
+        player1Turn = true;
     }
 
     public void startGame() {
         System.out.println("=== Welcome to Battleship ===");
         player1 = new Player("Player 1", BattleshipManager.createStandardShips());
         player2 = new Player("Player 2", BattleshipManager.createStandardShips());
+        table1 = new Table();
+        table2 = new Table();
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            placeShips(player1, scanner);
-            placeShips(player2, scanner);
-            gameLoop(scanner);
-        } catch (Exception e) {
-            System.err.println("⚠ Error during game: " + e.getMessage());
-        }
+        placeShips(player1, table1);
+        placeShips(player2, table2);
+
+        // Crear un solo frame por jugador
+        BattleshipFrame frame1 = new BattleshipFrame(table1);
+        BattleshipFrame frame2 = new BattleshipFrame(table2);
+
+        gameLoop(frame1, frame2);
+        scanner.close();
     }
 
-    private void placeShips(Player player, Scanner scanner) {
+    public void placeShips(Player player, Table table) {
         System.out.println("\n--- " + player.getName() + " placing ships ---");
         for (Ship ship : player.getShips()) {
-            boolean placed = false;
-            while (!placed) {
-                placed = tryPlaceShip(player, ship, scanner);
-                if (!placed) System.out.println("Invalid placement. Try again.");
+            while (!tryPlaceShip(player, table, ship)) {
+                System.out.println("Invalid placement. Try again.");
             }
-            printBoard(player, true);
         }
+        table.drowMyPlayerTable(player.getShips());
     }
 
-    private boolean tryPlaceShip(Player player, Ship ship, Scanner scanner) {
-        System.out.println("Place your " + ship.getClass().getSimpleName() + " (size " + ship.getSize() + ")");
-        int row = safeNextInt(scanner, "Starting row (0-9): ");
-        int col = safeNextInt(scanner, "Starting column (0-9): ");
-        boolean horizontal = safeNextBoolean(scanner, "Horizontal? (true/false): ");
+    private boolean tryPlaceShip(Player player, Table table, Ship ship) {
+        System.out.printf("Place your %s (size %d)%n",
+                ship.getClass().getSimpleName(), ship.getSize());
+        System.out.print("Starting row (0-9): ");
+        int row = scanner.nextInt();
+        System.out.print("Starting column (0-9): ");
+        int col = scanner.nextInt();
+        System.out.print("Horizontal? (true/false): ");
+        boolean horizontal = scanner.nextBoolean();
 
-        if (!isPlacementValid(row, col, ship.getSize(), horizontal)) {
+        // ✅ Corrige la orientación: ahora horizontal = hacia la derecha, vertical = hacia abajo
+        int maxRow = horizontal ? row : row + ship.getSize() - 1;
+        int maxCol = horizontal ? col + ship.getSize() - 1 : col;
+        if (maxRow > Position.MAX || maxCol > Position.MAX) {
             System.out.println("Ship goes out of bounds. Try again.");
             return false;
         }
@@ -58,31 +72,7 @@ public class SimulationGameController {
         return true;
     }
 
-    private int safeNextInt(Scanner scanner, String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.print("Invalid input. " + prompt);
-            scanner.next();
-        }
-        return scanner.nextInt();
-    }
-
-    private boolean safeNextBoolean(Scanner scanner, String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextBoolean()) {
-            System.out.print("Invalid input. " + prompt);
-            scanner.next();
-        }
-        return scanner.nextBoolean();
-    }
-
-    private boolean isPlacementValid(int row, int col, int size, boolean horizontal) {
-        int maxRow = horizontal ? row : row + size - 1;
-        int maxCol = horizontal ? col + size - 1 : col;
-        return maxRow <= Position.MAX && maxCol <= Position.MAX;
-    }
-
-    private boolean isOverlapping(Player player, List<Position> positions) {
+    public boolean isOverlapping(Player player, List<Position> positions) {
         for (Ship other : player.getShips()) {
             for (Position p : positions) {
                 if (other.getPositions().contains(p)) {
@@ -93,59 +83,57 @@ public class SimulationGameController {
         return false;
     }
 
-    private void gameLoop(Scanner scanner) {
+    public void gameLoop(BattleshipFrame frame1, BattleshipFrame frame2) {
         while (true) {
             Player current = player1Turn ? player1 : player2;
             Player enemy = player1Turn ? player2 : player1;
+            Table enemyTable = player1Turn ? table2 : table1;
 
             System.out.println("\n=== " + current.getName() + "'s turn ===");
-            printBoard(enemy, false);
 
-            Position shot = askForShot(scanner);
-            String result = current.shootAt(shot, enemy);
-            System.out.println("Result: " + result);
+            Position shot = askForShot();
 
-            if (enemy.hasLost()) {
+            // ✅ Usa tu método checkRivalShot
+            boolean hit = enemyTable.checkRivalShot(shot, enemy.getShips());
+            System.out.println("Result: " + (hit ? "HIT" : "MISS"));
+
+            // 🔄 refresca los tableros ya existentes
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                frame1.refreshBoard();
+                frame2.refreshBoard();
+            });
+
+            // ✅ comprueba si todos los barcos del enemigo han sido destruidos
+            if (allShipsDestroyed(enemy, enemyTable)) {
                 System.out.println("\n🏆 " + current.getName() + " wins the game!");
                 break;
             }
+
             player1Turn = !player1Turn;
         }
     }
 
-    private Position askForShot(Scanner scanner) {
+    public boolean allShipsDestroyed(Player enemy, Table enemyTable) {
+        for (Ship ship : enemy.getShips()) {
+            for (Position p : ship.getPositions()) {
+                if (enemyTable.getMatrix()[p.getX()][p.getY()] != 2) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public Position askForShot() {
         while (true) {
-            int x = safeNextInt(scanner, "Enter row (0-9): ");
-            int y = safeNextInt(scanner, "Enter column (0-9): ");
+            System.out.print("Enter shot coordinates (row column): ");
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
             if (!Position.isValid(x, y)) {
                 System.out.println("Coordinates out of bounds. Try again.");
                 continue;
             }
             return new Position(x, y);
-        }
-    }
-
-    private void printBoard(Player player, boolean showShips) {
-        char[][] grid = new char[10][10];
-        for (int i = 0; i < 10; i++) Arrays.fill(grid[i], '.');
-        for (Ship s : player.getShips()) {
-            for (Position p : s.getPositions()) {
-                if (s.getHits().contains(p)) {
-                    grid[p.getX()][p.getY()] = 'X';
-                } else if (showShips) {
-                    grid[p.getX()][p.getY()] = 'O';
-                }
-            }
-        }
-
-        System.out.println("\n" + player.getName() + (showShips ? " (your ships)" : " (enemy board)"));
-        System.out.print("   ");
-        for (int j = 0; j < 10; j++) System.out.print(j + " ");
-        System.out.println();
-        for (int i = 0; i < 10; i++) {
-            System.out.print(i + " ");
-            for (int j = 0; j < 10; j++) System.out.print(grid[i][j] + " ");
-            System.out.println();
         }
     }
 }
