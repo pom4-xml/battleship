@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+import java.util.Arrays;
 class PlayerTest {
 
     private Player player1;
@@ -157,10 +157,7 @@ class PlayerTest {
         
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
         
-        Player player = new Player("TestPlayer", List.of(
-            new Destroyer(), 
-            new Submarine()
-        ));
+Player player = new Player("TestPlayer", Arrays.asList(new Destroyer(), new Submarine()));
         
         player.placeShipsManually(scanner);
         
@@ -183,11 +180,8 @@ class PlayerTest {
                        "1\n0\ntrue\n";    // Valid position
         
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
-        
-        Player player = new Player("TestPlayer", List.of(
-            new Destroyer(),
-            new Destroyer()
-        ));
+        Player player = new Player("TestPlayer", Arrays.asList(new Destroyer(), new Destroyer()));
+
         
         player.placeShipsManually(scanner);
         
