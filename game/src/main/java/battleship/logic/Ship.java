@@ -1,4 +1,4 @@
-package battleship;
+package battleship.logic;
 
 import java.util.ArrayList;
 import java.util.HashSet;

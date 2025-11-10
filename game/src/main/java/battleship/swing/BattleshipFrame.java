@@ -2,10 +2,10 @@ package battleship.swing;
 
 import javax.swing.*;
 
+import battleship.logic.Table;
+
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
-import battleship.Table;
 
 
 public class BattleshipFrame extends JFrame {

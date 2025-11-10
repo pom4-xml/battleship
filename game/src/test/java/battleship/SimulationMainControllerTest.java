@@ -3,6 +3,11 @@ package battleship;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
+import battleship.logic.Player;
+import battleship.logic.Position;
+import battleship.logic.Ship;
+import battleship.logic.SimulationGameController;
+import battleship.logic.Table;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;

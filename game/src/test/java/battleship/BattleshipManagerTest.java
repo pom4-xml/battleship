@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import battleship.ship.*;
+
+import battleship.logic.BattleshipManager;
+import battleship.logic.Ship;
+import battleship.logic.ship.*;
 
 class BattleshipManagerTest {
 

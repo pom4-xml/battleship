@@ -1,4 +1,4 @@
-package battleship;
+package battleship.logic;
 
 public class Position {
     private int x;

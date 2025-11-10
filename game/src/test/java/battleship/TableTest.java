@@ -8,7 +8,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import battleship.ship.Battleship;
+import battleship.logic.Position;
+import battleship.logic.Ship;
+import battleship.logic.Table;
+import battleship.logic.ship.Battleship;
 
 class TableTest {
 

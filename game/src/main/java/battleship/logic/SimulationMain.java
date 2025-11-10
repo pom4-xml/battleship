@@ -1,4 +1,4 @@
-package battleship;
+package battleship.logic;
 
 public class SimulationMain {
     public static void main(String[] args) {

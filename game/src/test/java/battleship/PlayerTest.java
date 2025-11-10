@@ -3,7 +3,11 @@ package battleship;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import battleship.ship.*;
+
+import battleship.logic.Player;
+import battleship.logic.Position;
+import battleship.logic.Ship;
+import battleship.logic.ship.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;

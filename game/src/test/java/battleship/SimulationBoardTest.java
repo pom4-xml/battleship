@@ -2,7 +2,11 @@ package battleship;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import battleship.ship.Destroyer;
+
+import battleship.logic.Position;
+import battleship.logic.Ship;
+import battleship.logic.SimulationBoard;
+import battleship.logic.ship.Destroyer;
 
 import java.util.ArrayList;
 

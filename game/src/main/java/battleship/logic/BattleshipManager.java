@@ -1,13 +1,13 @@
-package battleship;
+package battleship.logic;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import battleship.ship.Battleship;
-import battleship.ship.Carrier;
-import battleship.ship.Cruiser;
-import battleship.ship.Destroyer;
-import battleship.ship.Submarine;
+import battleship.logic.ship.Battleship;
+import battleship.logic.ship.Carrier;
+import battleship.logic.ship.Cruiser;
+import battleship.logic.ship.Destroyer;
+import battleship.logic.ship.Submarine;
 
 public class BattleshipManager {
     

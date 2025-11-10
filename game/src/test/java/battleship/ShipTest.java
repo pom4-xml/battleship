@@ -3,6 +3,9 @@ package battleship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import battleship.logic.Position;
+import battleship.logic.Ship;
+
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

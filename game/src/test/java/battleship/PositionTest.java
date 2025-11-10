@@ -3,6 +3,8 @@ package battleship;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import battleship.logic.Position;
+
 class PositionTest {
 
     @Test

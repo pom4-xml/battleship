@@ -1,5 +1,5 @@
-package battleship.ship;
-import battleship.Ship;
+package battleship.logic.ship;
+import battleship.logic.Ship;
 
 public class Destroyer extends Ship {
     public Destroyer() {

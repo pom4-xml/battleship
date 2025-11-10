@@ -3,7 +3,7 @@ package battleship.swing;
 
 import javax.swing.*;
 
-import battleship.Table;
+import battleship.logic.Table;
 
 import java.awt.*;
 

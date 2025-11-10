@@ -1,8 +1,10 @@
 package battleship.swing;
 
 import javax.swing.*;
+
+import battleship.logic.Table;
+
 import java.awt.*;
-import battleship.Table;
 
 public class PlayerBoardPanel extends JPanel {
     private transient Table table;

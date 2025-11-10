@@ -1,4 +1,4 @@
-package battleship;
+package battleship.logic;
 
 import java.util.*;
 import battleship.swing.BattleshipFrame;

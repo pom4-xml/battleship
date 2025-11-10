@@ -1,7 +1,5 @@
 package battleship.swing;
 
-import battleship.Table;
-
 import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +8,9 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import battleship.logic.Table;
+
 import java.lang.reflect.Field;
 
 class BattleshipFrameTest extends EasyMockSupport {

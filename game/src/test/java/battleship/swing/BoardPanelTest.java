@@ -1,9 +1,9 @@
 package battleship.swing;
 
-import battleship.Table;
-import battleship.Position;
-import battleship.ship.Battleship;
-import battleship.Ship;
+import battleship.logic.Position;
+import battleship.logic.Ship;
+import battleship.logic.Table;
+import battleship.logic.ship.Battleship;
 
 import java.util.ArrayList;
 import java.util.Arrays;
