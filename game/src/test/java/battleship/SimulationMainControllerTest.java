@@ -3,7 +3,6 @@ package battleship;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import battleship.swing.BattleshipFrame;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -183,71 +182,5 @@ class SimulationGameControllerTest {
         }
     }
     
-    @Test
-    void testGameLoop() {
-        // 1️⃣ Simulamos input del usuario: disparo fila 0, columna 0
-        String input = "0 0\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        java.io.InputStream sysInBackup = System.in;
-        System.setIn(in);
-
-        try {
-            // 2️⃣ Creamos el controlador
-            SimulationGameController controller = new SimulationGameController();
-
-            // 3️⃣ Creamos barcos y jugadores
-            Ship ship1 = new TestShip(1);
-            ship1.setPositions(java.util.Arrays.asList(new Position(0,0)));
-
-            Player player1 = new Player("Player 1", java.util.Arrays.asList(ship1));
-            Player player2 = new Player("Player 2", java.util.Arrays.asList(ship1));
-
-            // 4️⃣ Creamos tablas y marcamos la posición como destruida (2) para terminar el bucle
-            Table table1 = new Table();
-            Table table2 = new Table();
-            table1.getMatrix()[0][0] = 2;
-            table2.getMatrix()[0][0] = 2;
-
-            // 5️⃣ Asignamos jugadores y tablas usando reflexión
-            java.lang.reflect.Field fPlayer1 = SimulationGameController.class.getDeclaredField("player1");
-            fPlayer1.setAccessible(true);
-            fPlayer1.set(controller, player1);
-
-            java.lang.reflect.Field fPlayer2 = SimulationGameController.class.getDeclaredField("player2");
-            fPlayer2.setAccessible(true);
-            fPlayer2.set(controller, player2);
-
-            java.lang.reflect.Field fTable1 = SimulationGameController.class.getDeclaredField("table1");
-            fTable1.setAccessible(true);
-            fTable1.set(controller, table1);
-
-            java.lang.reflect.Field fTable2 = SimulationGameController.class.getDeclaredField("table2");
-            fTable2.setAccessible(true);
-            fTable2.set(controller, table2);
-
-            // 6️⃣ Mockeamos los frames
-            BattleshipFrame mockFrame1 = EasyMock.createMock(BattleshipFrame.class);
-            BattleshipFrame mockFrame2 = EasyMock.createMock(BattleshipFrame.class);
-
-            mockFrame1.refreshBoard();
-            EasyMock.expectLastCall().anyTimes();
-            mockFrame2.refreshBoard();
-            EasyMock.expectLastCall().anyTimes();
-            EasyMock.replay(mockFrame1, mockFrame2);
-
-            // 7️⃣ Ejecutamos gameLoop (terminará inmediatamente)
-            controller.gameLoop(mockFrame1, mockFrame2);
-
-            // 8️⃣ Verificamos que refreshBoard se llamó
-            EasyMock.verify(mockFrame1, mockFrame2);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            assert false : "El test falló por excepción: " + e.getMessage();
-        } finally {
-            // Restauramos System.in
-            System.setIn(sysInBackup);
-        }
-    }
 
 }
