@@ -150,11 +150,62 @@ class TableTest {
         Ship invalidShip = new Battleship();
         invalidShip.setPositions(java.util.Arrays.asList(invalidPosition));
 
-        List<Ship> singleInvalidShip = java.util.Collections.singletonList(invalidShip);
-
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> table.drowMyPlayerTable(singleInvalidShip));
+                () -> table.drowMyPlayerTable(java.util.Collections.singletonList(invalidShip)));
+
         assertTrue(ex.getMessage().contains("Position out of bounds"));
     }
+
+    //poner en ammirllo ->
+
+    @Test
+    void testShipCompletelySunk() {
+        // Marcar todas las posicionescomo impactadas 
+        for (Position p : ship.getPositions()) {
+            table.getMatrix()[p.getX()][p.getY()] = 2;
+        }
+
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertTrue(result);
+
+        // Verificar que todas las posiciones ahora sean 3 (amarillo)
+        for (Position p : ship.getPositions()) {
+            assertEquals(3, table.getMatrix()[p.getX()][p.getY()]);
+        }
+    }
+
+    @Test
+    void testShipPartiallyHit() {
+        // Marcar solo algunas posiciones como impactadas
+        table.getMatrix()[0][0] = 2;
+        table.getMatrix()[1][0] = 0; // no tocado
+        table.getMatrix()[2][0] = 2;
+        table.getMatrix()[3][0] = 0; // no tocado
+
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertFalse(result);
+
+        // Verificar que las posiciones no tocadas no se han cambiado a 3
+        assertEquals(2, table.getMatrix()[0][0]);
+        assertEquals(0, table.getMatrix()[1][0]);
+        assertEquals(2, table.getMatrix()[2][0]);
+        assertEquals(0, table.getMatrix()[3][0]);
+    }
+
+    @Test
+    void testShipNotHit() {
+        // Ninguna posición impactada
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertFalse(result);
+
+        // Todas las posiciones deberían seguir 0
+        for (Position p : ship.getPositions()) {
+            assertEquals(0, table.getMatrix()[p.getX()][p.getY()]);
+        }
+    }
+
 }

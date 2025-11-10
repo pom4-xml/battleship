@@ -22,11 +22,29 @@ public class Table {
         for (Ship ship : myListOfShips) {
             if (ship.getPositions().contains(position)) {
                 matrix[position.getX()][position.getY()] = 2;
+                checkIfSunk(ship, matrix);
                 return true;
             }
         }
         matrix[position.getX()][position.getY()] = 1;
         return false;
+    }
+
+    public boolean checkIfSunk(Ship ship, int[][] matrix) {
+        boolean sunk = true;
+        for (Position p : ship.getPositions()) {
+            if (matrix[p.getX()][p.getY()] != 2) {
+                sunk = false;
+                break;
+            }
+        }
+        if (sunk) {
+            for (Position p : ship.getPositions()) {
+                matrix[p.getX()][p.getY()] = 3; // marcar posiciones hundidas (amarillo)
+            }
+            System.out.println("Ship SUNK at positions: " + ship.getPositions());
+        }
+        return sunk;
     }
 
     public int[][] getMatrix() {
