@@ -57,9 +57,11 @@ class TableTest {
     @Test
     void testShotShipsListNull() {
         Position position = new Position(0, 0);
+
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> table.checkRivalShot(position, null));
+
         assertEquals("List of Ships can't be null", ex.getMessage());
     }
 
@@ -67,9 +69,11 @@ class TableTest {
     void testShotShipsListEmpty() {
         Position position = new Position(0, 0);
         List<Ship> ships = new ArrayList<>();
+
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
                 () -> table.checkRivalShot(position, ships));
+
         assertEquals("List of ships can't be empty", ex.getMessage());
     }
 
@@ -82,6 +86,8 @@ class TableTest {
             }
         }
     }
+
+    // my ships
 
     @Test
     void testDrawMyPlayerTable_CorrectPositions() {
@@ -113,15 +119,16 @@ class TableTest {
 
     @Test
     void testDrawMyPlayerTable_EmptyListThrows() {
+        List<Ship> emptyList = new ArrayList<>();
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
-                () -> table.drowMyPlayerTable(new ArrayList<>()));
+                () -> table.drowMyPlayerTable(emptyList));
         assertEquals("List of ships can't be empty", ex.getMessage());
     }
 
     @Test
     void testDrawMyPlayerTable_MatrixNotCleanThrows() {
-        table.getMyPlayerMatrix()[0][0] = 1;
+        table.getMyPlayerMatrix()[0][0] = 1; // simula matriz no vacía
         IllegalStateException ex = assertThrows(
                 IllegalStateException.class,
                 () -> table.drowMyPlayerTable(emptyShips));
@@ -136,11 +143,12 @@ class TableTest {
         java.lang.reflect.Field fieldY = Position.class.getDeclaredField("y");
         fieldX.setAccessible(true);
         fieldY.setAccessible(true);
+
         fieldX.setInt(invalidPosition, 11);
         fieldY.setInt(invalidPosition, 0);
 
         Ship invalidShip = new Battleship();
-        invalidShip.setPositions(java.util.Collections.singletonList(invalidPosition));
+        invalidShip.setPositions(java.util.Arrays.asList(invalidPosition));
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -148,4 +156,56 @@ class TableTest {
 
         assertTrue(ex.getMessage().contains("Position out of bounds"));
     }
+
+    //poner en ammirllo ->
+
+    @Test
+    void testShipCompletelySunk() {
+        // Marcar todas las posicionescomo impactadas 
+        for (Position p : ship.getPositions()) {
+            table.getMatrix()[p.getX()][p.getY()] = 2;
+        }
+
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertTrue(result);
+
+        // Verificar que todas las posiciones ahora sean 3 (amarillo)
+        for (Position p : ship.getPositions()) {
+            assertEquals(3, table.getMatrix()[p.getX()][p.getY()]);
+        }
+    }
+
+    @Test
+    void testShipPartiallyHit() {
+        // Marcar solo algunas posiciones como impactadas
+        table.getMatrix()[0][0] = 2;
+        table.getMatrix()[1][0] = 0; // no tocado
+        table.getMatrix()[2][0] = 2;
+        table.getMatrix()[3][0] = 0; // no tocado
+
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertFalse(result);
+
+        // Verificar que las posiciones no tocadas no se han cambiado a 3
+        assertEquals(2, table.getMatrix()[0][0]);
+        assertEquals(0, table.getMatrix()[1][0]);
+        assertEquals(2, table.getMatrix()[2][0]);
+        assertEquals(0, table.getMatrix()[3][0]);
+    }
+
+    @Test
+    void testShipNotHit() {
+        // Ninguna posición impactada
+        boolean result = table.checkIfSunk(ship, table.getMatrix());
+
+        assertFalse(result);
+
+        // Todas las posiciones deberían seguir 0
+        for (Position p : ship.getPositions()) {
+            assertEquals(0, table.getMatrix()[p.getX()][p.getY()]);
+        }
+    }
+
 }

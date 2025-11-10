@@ -37,11 +37,12 @@ public class BoardPanel extends JPanel {
                     case 0 : g.setColor(Color.BLUE); break;  // agua
                     case 1 : g.setColor(Color.BLACK); break;  // disparo fallido
                     case 2 : g.setColor(Color.RED);  break;  // impacto
+                    case 3: g.setColor(Color.YELLOW); break; //  hundido
                     default: break;
                 }
-                g.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                g.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
                 g.setColor(Color.BLACK);
-                g.drawRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                g.drawRect(y * cellSize, x * cellSize, cellSize, cellSize);
             }
         }
     }
