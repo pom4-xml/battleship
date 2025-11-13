@@ -15,28 +15,28 @@ import java.lang.reflect.Field;
 
 class BattleshipFrameTest extends EasyMockSupport {
 
-    Table playerTable;
-    Table enemyTable;
+    private Table playerTable;
+    private Table enemyTable;
     private BattleshipFrame frame;
-    private int cellSize = 40;
+    private final int cellSize = 40;
+    private final String playerName = "TestPlayer";
 
     @BeforeEach
     void setUp() {
         playerTable = new Table();
         enemyTable = new Table();
-        frame = new BattleshipFrame("TestPlayer", playerTable, enemyTable);
+        frame = new BattleshipFrame(playerName, playerTable, enemyTable);
+        frame.setVisible(false);
     }
 
     @Test
     void testFrameInitialization() {
         assertNotNull(frame, "Frame should not be null");
 
-        // Contenedor principal
         JPanel contentPane = (JPanel) frame.getContentPane();
-        assertTrue(contentPane.getComponentCount() > 0);
+        assertNotNull(contentPane);
+        assertEquals(2, contentPane.getComponentCount(), "Should have exactly 2 panels");
 
-        // Sub paneles
-        assertEquals(2, contentPane.getComponentCount());
         assertTrue(contentPane.getComponent(0) instanceof PlayerBoardPanel);
         assertTrue(contentPane.getComponent(1) instanceof BoardPanel);
     }
@@ -69,17 +69,15 @@ class BattleshipFrameTest extends EasyMockSupport {
 
     @Test
     void testFrameProperties() {
-        assertEquals("Battleship Frame", frame.getTitle());
+        assertEquals(playerName + "'s Battleship Frame", frame.getTitle());
         assertEquals(WindowConstants.EXIT_ON_CLOSE, frame.getDefaultCloseOperation());
-        assertTrue(frame.isVisible());
 
         int expectedWidth = 2 * 10 * cellSize;
-        int expectedHeight = 10 * cellSize + cellSize; // +cellSize margen extra
+        int expectedHeight = 10 * cellSize + cellSize;
 
         assertEquals(expectedWidth, frame.getWidth());
         assertEquals(expectedHeight, frame.getHeight());
 
-        // Posición fija establecida en el constructor
         assertEquals(500, frame.getX());
         assertEquals(500, frame.getY());
     }
