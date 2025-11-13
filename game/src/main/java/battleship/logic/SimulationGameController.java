@@ -1,6 +1,8 @@
 package battleship.logic;
 
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
+
 import battleship.swing.BattleshipFrame;
 
 public class SimulationGameController {
@@ -45,16 +47,29 @@ public class SimulationGameController {
     }
 
     private boolean tryPlaceShip(Player player, Ship ship) {
+        boolean horizontal = false;
+        boolean isValidInput = false;
         System.out.printf("Place your %s (size %d)%n",
                 ship.getClass().getSimpleName(), ship.getSize());
         System.out.print("Starting row (0-9): ");
         int row = scanner.nextInt();
         System.out.print("Starting column (0-9): ");
         int col = scanner.nextInt();
-        System.out.print("Horizontal? (true/false): ");
-        boolean horizontal = scanner.nextBoolean();
+        while (!isValidInput) {
+            try {
+            System.out.print("Horizontal? (true/false): ");
+            horizontal = scanner.nextBoolean();
+            isValidInput = true;
+            } catch (Exception e) {
+                isValidInput = false;
+                scanner.nextLine();
+                System.out.println("Invalid input. Please enter true or false.");
+            }
+            
+        }
 
-        // ✅ Corrige la orientación: ahora horizontal = hacia la derecha, vertical = hacia abajo
+        // ✅ Corrige la orientación: ahora horizontal = hacia la derecha, vertical =
+        // hacia abajo
         int maxRow = horizontal ? row : row + ship.getSize() - 1;
         int maxCol = horizontal ? col + ship.getSize() - 1 : col;
         if (maxRow > Position.MAX || maxCol > Position.MAX) {
