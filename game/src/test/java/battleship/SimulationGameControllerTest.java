@@ -236,10 +236,10 @@ void testPlaceShipsNoTable() {
     @Test
     void testAllShipsDestroyed_BIEN() {
         Player player = new Player("raul", listShips);
-        table.getMatrix()[0][0] = 2;
-        table.getMatrix()[1][0] = 2;
-        table.getMatrix()[2][0] = 2;
-        table.getMatrix()[3][0] = 2;
+        table.getMatrix()[0][0] = 3;
+        table.getMatrix()[1][0] = 3;
+        table.getMatrix()[2][0] = 3;
+        table.getMatrix()[3][0] = 3;
         boolean estado = simulationGameController.allShipsDestroyed(player, table);
         assertTrue(estado);
     }
