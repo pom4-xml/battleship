@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import battleship.logic.SimulationGameController;
 import battleship.logic.SimulationMain;
 
-
 import java.lang.reflect.Field;
 
 class SimulationTest extends EasyMockSupport {
