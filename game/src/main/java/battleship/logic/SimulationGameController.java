@@ -1,6 +1,8 @@
 package battleship.logic;
 
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
+
 import battleship.swing.BattleshipFrame;
 
 public class SimulationGameController {
@@ -31,7 +33,6 @@ public class SimulationGameController {
         BattleshipFrame frame2 = new BattleshipFrame(table2);
 
         gameLoop(frame1, frame2);
-        scanner.close();
     }
 
     public void placeShips(Player player, Table table) {
@@ -116,6 +117,7 @@ public class SimulationGameController {
 
             player1Turn = !player1Turn;
         }
+        scanner.close();
     }
 
     public boolean allShipsDestroyed(Player enemy, Table enemyTable) {
