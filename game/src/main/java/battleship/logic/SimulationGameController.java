@@ -124,7 +124,7 @@ public class SimulationGameController {
     public boolean allShipsDestroyed(Player enemy, Table enemyTable) {
         for (Ship ship : enemy.getShips()) {
             for (Position p : ship.getPositions()) {
-                if (enemyTable.getMatrix()[p.getX()][p.getY()] != 2) {
+                if (enemyTable.getMatrix()[p.getX()][p.getY()] != 3) {
                     return false;
                 }
             }
