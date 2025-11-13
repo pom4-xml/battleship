@@ -27,8 +27,9 @@ public class SimulationGameController {
         placeShips(player2, table2);
 
         // Crear un solo frame por jugador
-        BattleshipFrame frame1 = new BattleshipFrame(table1);
-        BattleshipFrame frame2 = new BattleshipFrame(table2);
+        BattleshipFrame frame1 = new BattleshipFrame(player1.getName(), table1, table2); // jugador 1
+        BattleshipFrame frame2 = new BattleshipFrame(player2.getName(), table2, table1); // jugador 2
+
 
         gameLoop(frame1, frame2);
         scanner.close();

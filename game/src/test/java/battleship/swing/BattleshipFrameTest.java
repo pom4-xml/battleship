@@ -15,14 +15,16 @@ import java.lang.reflect.Field;
 
 class BattleshipFrameTest extends EasyMockSupport {
 
-    private Table table;
+    Table playerTable;
+    Table enemyTable;
     private BattleshipFrame frame;
     private int cellSize = 40;
 
     @BeforeEach
     void setUp() {
-        table = new Table();
-        frame = new BattleshipFrame(table);
+        playerTable = new Table();
+        enemyTable = new Table();
+        frame = new BattleshipFrame("TestPlayer", playerTable, enemyTable);
     }
 
     @Test
