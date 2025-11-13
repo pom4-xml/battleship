@@ -20,8 +20,8 @@ public class BattleshipFrame extends JFrame {
         container.setPreferredSize(new Dimension(2 * 10 * cellSize, 10 * cellSize));
         playerPanel = new PlayerBoardPanel(table);
         rivalPanel = new BoardPanel(table);
-        container.add(rivalPanel);
         container.add(playerPanel);
+        container.add(rivalPanel);
         setContentPane(container);
         
         setSize(2 * 10 * cellSize, 10 * cellSize + cellSize);    //margen  
