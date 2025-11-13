@@ -9,10 +9,10 @@ import battleship.logic.SimulationMain;
 
 import java.lang.reflect.Field;
 
-public class SimulationTest extends EasyMockSupport {
+class SimulationTest extends EasyMockSupport {
 
     @Test
-    public void testStartGameCalled() throws Exception {
+    void testStartGameCalled() throws Exception {
         SimulationGameController mockController = createMock(SimulationGameController.class);
 
         mockController.startGame();
