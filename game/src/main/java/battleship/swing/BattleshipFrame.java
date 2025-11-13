@@ -13,12 +13,12 @@ public class BattleshipFrame extends JFrame {
     private PlayerBoardPanel playerPanel;
     private int cellSize = 40;
 
-    public BattleshipFrame(String playerName, Table table, Table enemyTabñe) {
+    public BattleshipFrame(String playerName, Table table, Table enemyTable) {
         setTitle(playerName + "'s Battleship Frame");
         JPanel container = new JPanel(new GridLayout(1, 2));
         container.setPreferredSize(new Dimension(2 * 10 * cellSize, 10 * cellSize));
         playerPanel = new PlayerBoardPanel(table);
-        rivalPanel = new BoardPanel(enemyTabñe);
+        rivalPanel = new BoardPanel(enemyTable);
         container.add(playerPanel);
         container.add(rivalPanel);
         setContentPane(container);
