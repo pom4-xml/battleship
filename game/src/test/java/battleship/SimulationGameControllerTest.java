@@ -1,11 +1,24 @@
 package battleship;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import org.easymock.EasyMockSupport;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Field;
 
 import battleship.logic.Player;
 import battleship.logic.Position;
@@ -13,23 +26,7 @@ import battleship.logic.Ship;
 import battleship.logic.SimulationGameController;
 import battleship.logic.Table;
 import battleship.logic.ship.Battleship;
-
-
 import battleship.swing.BattleshipFrame;
-
-
-import static org.easymock.EasyMock.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.Scanner;
-
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SimulationGameControllerTest extends EasyMockSupport {
     SimulationGameController simulationGameController;
@@ -91,23 +88,45 @@ class SimulationGameControllerTest extends EasyMockSupport {
     @Test
     void testPlaceShipsNoShips() {
         List<Ship> emptyList = new ArrayList<>();
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,() -> simulationGameController.placeShips(new Player("Edu", emptyList), table));assertEquals("Ship list can't be empty", ex.getMessage());
+        Player player = new Player("Edu", emptyList); // fuera de la lambda
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> simulationGameController.placeShips(player, table));
+
+        assertEquals("Ship list can't be empty", ex.getMessage());
     }
 
     @Test
     void testPlaceShipsListShipsNull() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,() -> simulationGameController.placeShips(new Player("Edu", null), table));assertEquals("Ship list can't be null", ex.getMessage());
+        Player player = new Player("Edu", null); // fuera de la lambda
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> simulationGameController.placeShips(player, table));
+
+        assertEquals("Ship list can't be null", ex.getMessage());
     }
 
     @Test
     void testPlaceShipsNoPlayer() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,() -> simulationGameController.placeShips(null, table));assertEquals("Player can't be null", ex.getMessage());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> simulationGameController.placeShips(null, table));
+        assertEquals("Player can't be null", ex.getMessage());
     }
 
     @Test
-    void testPlaceShipsNoTable() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,() -> simulationGameController.placeShips(new Player("Edu", listShips), null));assertEquals("Table can't be null", ex.getMessage());
-    }
+void testPlaceShipsNoTable() {
+    Player player = new Player("Edu", listShips); // se crea fuera de la lambda
+
+    IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException.class,
+        () -> simulationGameController.placeShips(player, null) // solo una invocación dentro
+    );
+
+    assertEquals("Table can't be null", ex.getMessage());
+}
+
 
     @Test
     void testPlaceShipsBien() {
@@ -259,7 +278,5 @@ class SimulationGameControllerTest extends EasyMockSupport {
         assertEquals(position, new Position(9, 9));
         assertTrue(os.toString().trim().contains("Coordinates out of bounds"));
     }
-
-    
 
 }
