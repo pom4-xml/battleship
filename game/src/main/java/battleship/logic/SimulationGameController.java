@@ -9,7 +9,7 @@ public class SimulationGameController {
     private Table table1;
     private Table table2;
     private boolean player1Turn;
-    final Scanner scanner;
+    private final Scanner scanner;
 
     public SimulationGameController() {
         scanner = new Scanner(System.in);
@@ -36,8 +36,13 @@ public class SimulationGameController {
     }
 
     public void placeShips(Player player, Table table) {
+        if(player == null) throw new IllegalArgumentException("Player can't be null");
+        if(table == null) throw new IllegalArgumentException("Table can't be null");
+        List<Ship> listShip = player.getShips();
+        if(listShip == null) throw new IllegalArgumentException("Ship list can't be null");
+        if(listShip.isEmpty()) throw new IllegalArgumentException("Ship list can't be empty");
         System.out.println("\n--- " + player.getName() + " placing ships ---");
-        for (Ship ship : player.getShips()) {
+        for (Ship ship : listShip) {
             while (!tryPlaceShip(player, ship)) {
                 System.out.println("Invalid placement. Try again.");
             }
@@ -45,7 +50,7 @@ public class SimulationGameController {
         table.drowMyPlayerTable(player.getShips());
     }
 
-    private boolean tryPlaceShip(Player player, Ship ship) {
+    public boolean tryPlaceShip(Player player, Ship ship) {
         System.out.printf("Place your %s (size %d)%n",
                 ship.getClass().getSimpleName(), ship.getSize());
         System.out.print("Starting row (0-9): ");
